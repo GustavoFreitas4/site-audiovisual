@@ -9,6 +9,7 @@ export const SERVICES = [
     description:
       "Registros aéreos e terrestres que transformam celebrações em filmes cheios de emoção, movimento e memória.",
     tags: ["Casamentos", "Pré-wedding", "Chá revelação", "Aniversários"],
+    video: "/videos/eventos-preview.mp4",
     icon: PartyPopper,
   },
   {
@@ -16,6 +17,7 @@ export const SERVICES = [
     description:
       "Conteúdo visual para buffets, salões e fornecedores mostrarem seus espaços, serviços e experiências por novos ângulos.",
     tags: ["Espaços de festa", "Buffets", "Fornecedores", "Redes sociais"],
+    video: "/videos/publicidade-preview.mp4",
     icon: Megaphone,
   },
   {
@@ -23,6 +25,7 @@ export const SERVICES = [
     description:
       "Imagens que revelam localização, escala e detalhes de propriedades para gerar mais interesse em cada anúncio.",
     tags: ["Casas", "Condomínios", "Terrenos", "Imobiliárias"],
+    video: "/videos/imoveis-preview.mp4",
     icon: Building2,
   },
 ] as const;

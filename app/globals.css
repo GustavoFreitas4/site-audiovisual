@@ -107,9 +107,61 @@ body {
   opacity: 1;
 }
 
-.service-row > * {
-  position: relative;
+.service-row::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
   z-index: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #ef4444 0%, rgba(239, 68, 68, 0) 78%);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+
+.service-row:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.service-row > :not(.service-video):not(.service-video-overlay):not(.service-cursor) {
+  position: relative;
+  z-index: 2;
+}
+
+.service-video {
+  z-index: 0;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.service-video-overlay {
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(3, 3, 4, .9) 0%, rgba(3, 3, 4, .64) 54%, rgba(3, 3, 4, .48) 100%);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.service-cursor {
+  z-index: 20;
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service-row--video-ready .service-video {
+    opacity: .35;
+  }
+
+  .service-row--video-ready .service-video-overlay {
+    opacity: 1;
+  }
+
+  .service-cursor {
+    display: flex;
+  }
 }
 
 .whatsapp-float::before {
@@ -148,5 +200,12 @@ body {
   .hero-enter,
   .whatsapp-float::before {
     animation: none;
+  }
+
+  .service-row::after,
+  .service-video,
+  .service-video-overlay,
+  .service-cursor {
+    transition: none;
   }
 }
