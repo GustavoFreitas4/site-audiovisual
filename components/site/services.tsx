@@ -18,6 +18,10 @@ type CursorPosition = {
   visible: boolean;
 };
 
+function hasFinePointer() {
+  return typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === true;
+}
+
 function ServiceCard({ service, index }: { service: Service; index: number }) {
   const Icon = service.icon;
   const cardRef = useRef<HTMLElement>(null);
@@ -26,7 +30,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   const [cursor, setCursor] = useState<CursorPosition>({ x: 0, y: 0, visible: false });
 
   const handleMouseEnter = () => {
-    if (videoState === "error") return;
+    if (videoState === "error" || !hasFinePointer()) return;
 
     setCursor((current) => ({ ...current, visible: true }));
     const video = videoRef.current;
@@ -40,7 +44,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   };
 
   const handleMouseMove = (event: MouseEvent<HTMLElement>) => {
-    if (videoState === "error") return;
+    if (videoState === "error" || !hasFinePointer()) return;
 
     const card = cardRef.current;
     if (!card) return;
