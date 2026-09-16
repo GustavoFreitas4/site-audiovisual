@@ -20,7 +20,6 @@ export function Hero() {
 
       <Header />
 
-      <div aria-hidden="true" className="absolute right-[-12rem] top-[18%] hidden h-[34rem] w-[34rem] rounded-full border-[5rem] border-[#ff2b2f]/75 lg:block" />
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 
       <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-end px-5 pb-8 pt-32 sm:min-h-[840px] sm:px-8 sm:pb-10 lg:min-h-[900px] lg:px-14 lg:pb-12 xl:px-20">
