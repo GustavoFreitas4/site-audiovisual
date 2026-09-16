@@ -5,9 +5,7 @@ import { ArrowUpRight, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 
 const STATS = [
-  { value: 150, prefix: "+", suffix: "", label: "eventos filmados" },
-  { value: 40, prefix: "+", suffix: "", label: "imóveis divulgados" },
-  { value: 98, prefix: "", suffix: "%", label: "de satisfação" },
+  { value: 100, prefix: "+", suffix: "", label: "serviços feitos" },
 ] as const;
 
 type Service = (typeof SERVICES)[number];
@@ -182,7 +180,7 @@ function ImpactStats() {
   }, [started]);
 
   return (
-    <div ref={statsRef} className="mt-14 grid gap-8 border-y border-white/10 py-10 sm:mt-20 sm:grid-cols-3 sm:gap-6 sm:py-12">
+    <div ref={statsRef} className="mx-auto mt-14 grid max-w-sm grid-cols-1 justify-items-center gap-8 border-y border-white/10 py-10 text-center sm:mt-20 sm:py-12">
       {STATS.map((stat, index) => (
         <div key={stat.label}>
           <p className="text-[clamp(2.2rem,6vw,3.8rem)] font-semibold leading-none tracking-[-.065em] text-white">

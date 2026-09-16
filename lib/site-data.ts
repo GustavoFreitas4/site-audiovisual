@@ -13,7 +13,7 @@ export const SERVICES = [
     icon: PartyPopper,
   },
   {
-    title: "Marcas & Negócios",
+    title: "Marcas e Negócios",
     description:
       "Produção audiovisual para empresas que querem transformar espaços e produtos em conteúdo que converte.",
     tags: ["Espaços comerciais", "Marcas", "Redes sociais", "Institucional"],
@@ -23,7 +23,7 @@ export const SERVICES = [
   {
     title: "Imóveis",
     description:
-      "Do drone ao detalhe: imagens que dão vida a cada cômodo e aceleram a decisão de compra.",
+      "Do alto ao detalhe: imagens que dão vida a cada cômodo e aceleram a decisão de compra.",
     tags: ["Apartamentos", "Casas de alto padrão", "Condomínios", "Lançamentos"],
     video: "/videos/imoveis-preview.mp4",
     icon: Building2,
