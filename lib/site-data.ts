@@ -13,18 +13,18 @@ export const SERVICES = [
     icon: PartyPopper,
   },
   {
-    title: "Publicidade",
+    title: "Marcas & Negócios",
     description:
-      "Conteúdo visual para buffets, salões e fornecedores mostrarem seus espaços, serviços e experiências por novos ângulos.",
-    tags: ["Espaços de festa", "Buffets", "Fornecedores", "Redes sociais"],
+      "Produção audiovisual para empresas que querem transformar espaços e produtos em conteúdo que converte.",
+    tags: ["Espaços comerciais", "Marcas", "Redes sociais", "Institucional"],
     video: "/videos/publicidade-preview.mp4",
     icon: Megaphone,
   },
   {
     title: "Imóveis",
     description:
-      "Imagens que revelam localização, escala e detalhes de propriedades para gerar mais interesse em cada anúncio.",
-    tags: ["Casas", "Condomínios", "Terrenos", "Imobiliárias"],
+      "Do drone ao detalhe: imagens que dão vida a cada cômodo e aceleram a decisão de compra.",
+    tags: ["Apartamentos", "Casas de alto padrão", "Condomínios", "Lançamentos"],
     video: "/videos/imoveis-preview.mp4",
     icon: Building2,
   },
