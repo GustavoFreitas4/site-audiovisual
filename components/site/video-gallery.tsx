@@ -33,7 +33,6 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVisibleRef = useRef(false);
   const isFocusedRef = useRef(false);
-  const hoverCloseTimerRef = useRef<number | null>(null);
   const exitTimerRef = useRef<number | null>(null);
   const isClosingRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -48,16 +47,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     setIsAudioActive(false);
   };
 
-  const clearHoverClose = () => {
-    if (hoverCloseTimerRef.current === null) return;
-    window.clearTimeout(hoverCloseTimerRef.current);
-    hoverCloseTimerRef.current = null;
-  };
-
   const closeSpotlight = () => {
     if (!isFocused || isClosingRef.current) return;
 
-    clearHoverClose();
     resetAudio();
     isClosingRef.current = true;
 
@@ -74,11 +66,6 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       isClosingRef.current = false;
       exitTimerRef.current = null;
     }, SPOTLIGHT_DURATION);
-  };
-
-  const scheduleSpotlightClose = () => {
-    clearHoverClose();
-    hoverCloseTimerRef.current = window.setTimeout(closeSpotlight, 180);
   };
 
   useEffect(() => {
@@ -127,7 +114,6 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       if (!isVisibleRef.current) videoRef.current?.pause();
       setSpotlightBox(null);
       isClosingRef.current = false;
-      clearHoverClose();
       return;
     }
 
@@ -158,41 +144,25 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       secondFrame = window.requestAnimationFrame(centerSpotlight);
     });
 
-    const handleScroll = () => {
-      const tile = tileRef.current;
-      if (!tile) return;
-      const rect = tile.getBoundingClientRect();
-      const isFarFromGrid = rect.bottom < -window.innerHeight * 0.6 || rect.top > window.innerHeight * 1.6;
-      if (isFarFromGrid) closeSpotlight();
-    };
-
     window.addEventListener("resize", centerSpotlight);
-    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(firstFrame);
       if (secondFrame) window.cancelAnimationFrame(secondFrame);
       window.removeEventListener("resize", centerSpotlight);
-      window.removeEventListener("scroll", handleScroll);
     };
   }, [isFocused]);
 
   useEffect(
     () => () => {
-      if (hoverCloseTimerRef.current !== null) window.clearTimeout(hoverCloseTimerRef.current);
       if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
     },
     [],
   );
 
-  const toggleAudio = () => {
+  const activateAudio = () => {
     const media = videoRef.current;
     if (!media || hasError) return;
-
-    if (isAudioActive) {
-      resetAudio();
-      return;
-    }
 
     media.muted = false;
     media
@@ -201,15 +171,25 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       .catch(() => resetAudio());
   };
 
-  const focusVideo = () => {
+  const openSpotlight = (enableSound: boolean) => {
     const tile = tileRef.current;
-    if (!tile || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (!tile || isFocused || isClosingRef.current) return;
 
-    clearHoverClose();
     isClosingRef.current = false;
     const rect = tile.getBoundingClientRect();
     setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
     onFocus();
+    if (enableSound) activateAudio();
+  };
+
+  const handleSoundClick = () => {
+    if (!isFocused) {
+      openSpotlight(true);
+      return;
+    }
+
+    if (isAudioActive) resetAudio();
+    else activateAudio();
   };
 
   const showSoundLabel = isFocused && !isAudioActive;
@@ -218,9 +198,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     <article
       ref={tileRef}
       aria-label={video.label}
-      className={`group relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-[90]" : "z-0"} ${isDimmed ? "opacity-35" : "opacity-100"}`}
-      onMouseEnter={focusVideo}
-      onMouseLeave={scheduleSpotlightClose}
+      className={`relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-[90]" : "z-0"} ${isDimmed ? "pointer-events-none opacity-35" : "opacity-100"}`}
     >
       <div
         className={`${isFocused && spotlightBox ? "fixed z-[100]" : "absolute inset-0"} overflow-hidden bg-[#111113] shadow-none transition-[left,top,width,height,box-shadow] duration-300 ease-out ${isFocused ? "shadow-[0_30px_90px_rgba(0,0,0,.78)]" : ""}`}
@@ -234,8 +212,6 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               }
             : undefined
         }
-        onMouseEnter={clearHoverClose}
-        onMouseLeave={scheduleSpotlightClose}
       >
         <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(255,43,47,.12),transparent_62%)] text-center">
           <div className="flex flex-col items-center gap-3 text-white/38">
@@ -250,7 +226,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
 
         <video
           ref={videoRef}
-          className={`absolute inset-0 size-full object-cover transition duration-300 group-hover:brightness-110 ${isReady && !hasError ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${isReady && !hasError ? "opacity-100" : "opacity-0"}`}
           src={shouldLoad ? video.src : undefined}
           poster={video.thumbnail}
           preload="metadata"
@@ -275,7 +251,16 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           }}
         />
 
-        <span className="pointer-events-none absolute left-3 top-3 grid size-7 place-items-center rounded-full bg-black/55 text-[.65rem] font-semibold text-white/70 backdrop-blur-sm">
+        <button
+          type="button"
+          aria-label={`Destacar ${video.label}`}
+          disabled={isFocused}
+          tabIndex={isFocused ? -1 : 0}
+          onClick={() => openSpotlight(false)}
+          className={`absolute inset-0 z-[1] bg-transparent ${isFocused ? "cursor-default" : "cursor-pointer"}`}
+        />
+
+        <span className="pointer-events-none absolute left-3 top-3 z-[2] grid size-7 place-items-center rounded-full bg-black/55 text-[.65rem] font-semibold text-white/70 backdrop-blur-sm">
           {String(index + 1).padStart(2, "0")}
         </span>
 
@@ -299,9 +284,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           aria-pressed={isAudioActive}
           onClick={(event) => {
             event.stopPropagation();
-            toggleAudio();
+            handleSoundClick();
           }}
-          className={`absolute bottom-3 right-3 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
+          className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
         >
           <span className="relative grid size-6 shrink-0 place-items-center">
             <VolumeX
@@ -328,14 +313,48 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
 
 export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
   const backButtonRef = useRef<HTMLButtonElement>(null);
+  const galleryRef = useRef<HTMLElement>(null);
   const [focusedVideoId, setFocusedVideoId] = useState<string | null>(null);
 
   useEffect(() => {
     backButtonRef.current?.focus({ preventScroll: true });
   }, []);
 
+  useEffect(() => {
+    if (!focusedVideoId) return;
+
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) setFocusedVideoId(null);
+      },
+      { threshold: 0.01 },
+    );
+
+    const closeOnSectionNavigation = () => {
+      if (window.location.hash !== "#servicos") setFocusedVideoId(null);
+    };
+
+    observer.observe(gallery);
+    window.addEventListener("hashchange", closeOnSectionNavigation);
+    window.addEventListener("popstate", closeOnSectionNavigation);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("hashchange", closeOnSectionNavigation);
+      window.removeEventListener("popstate", closeOnSectionNavigation);
+    };
+  }, [focusedVideoId]);
+
+  const leaveGallery = () => {
+    setFocusedVideoId(null);
+    onBack();
+  };
+
   return (
-    <section aria-label={`Galeria de vídeos de ${title}`}>
+    <section ref={galleryRef} aria-label={`Galeria de vídeos de ${title}`}>
       <div className="mb-8 flex flex-col gap-6 border-b border-white/12 pb-7 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-3 text-xs font-semibold uppercase tracking-[.22em] text-[#ff2b2f]">Galeria de vídeos</p>
@@ -344,7 +363,7 @@ export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
         <button
           ref={backButtonRef}
           type="button"
-          onClick={onBack}
+          onClick={leaveGallery}
           className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full border border-white/15 bg-white/[.04] px-5 text-sm font-semibold text-white/78 transition duration-300 hover:-translate-y-0.5 hover:border-[#ff2b2f]/70 hover:bg-[#ff2b2f] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           <ArrowLeft aria-hidden="true" size={17} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
