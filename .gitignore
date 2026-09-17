@@ -44,3 +44,6 @@ next-env.d.ts
 /.codex/
 /outputs/
 /work/
+
+# Originais locais dos vídeos; as cópias otimizadas ficam em public/videos/.
+/public/videoos/
