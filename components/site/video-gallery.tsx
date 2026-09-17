@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Film, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Film, Volume2, VolumeX, X } from "lucide-react";
 import type { GalleryVideo } from "@/lib/video-galleries";
 
 type VideoGalleryProps = {
@@ -19,15 +19,71 @@ type GalleryVideoTileProps = {
   onBlur: () => void;
 };
 
+type SpotlightBox = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+const SPOTLIGHT_DURATION = 300;
+
 function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }: GalleryVideoTileProps) {
   const tileRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVisibleRef = useRef(false);
+  const isFocusedRef = useRef(false);
+  const hoverCloseTimerRef = useRef<number | null>(null);
+  const exitTimerRef = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
-  const [focusOffset, setFocusOffset] = useState({ x: 0, y: 0 });
+  const [spotlightBox, setSpotlightBox] = useState<SpotlightBox | null>(null);
+
+  const resetAudio = () => {
+    const media = videoRef.current;
+    if (media) media.muted = true;
+    setIsAudioActive(false);
+  };
+
+  const clearHoverClose = () => {
+    if (hoverCloseTimerRef.current === null) return;
+    window.clearTimeout(hoverCloseTimerRef.current);
+    hoverCloseTimerRef.current = null;
+  };
+
+  const closeSpotlight = () => {
+    if (!isFocused || isClosingRef.current) return;
+
+    clearHoverClose();
+    resetAudio();
+    isClosingRef.current = true;
+
+    const tile = tileRef.current;
+    if (tile) {
+      const rect = tile.getBoundingClientRect();
+      setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+    }
+
+    if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
+    exitTimerRef.current = window.setTimeout(() => {
+      onBlur();
+      setSpotlightBox(null);
+      isClosingRef.current = false;
+      exitTimerRef.current = null;
+    }, SPOTLIGHT_DURATION);
+  };
+
+  const scheduleSpotlightClose = () => {
+    clearHoverClose();
+    hoverCloseTimerRef.current = window.setTimeout(closeSpotlight, 180);
+  };
+
+  useEffect(() => {
+    isFocusedRef.current = isFocused;
+  }, [isFocused]);
 
   useEffect(() => {
     const tile = tileRef.current;
@@ -52,12 +108,11 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           return;
         }
 
-        const media = videoRef.current;
-        if (media) {
-          media.muted = true;
-          media.pause();
+        if (!isFocusedRef.current) {
+          const media = videoRef.current;
+          if (media) media.pause();
+          resetAudio();
         }
-        setIsAudioActive(false);
       },
       { rootMargin: "80px 0px", threshold: 0.08 },
     );
@@ -66,13 +121,76 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isFocused) {
+      resetAudio();
+      if (!isVisibleRef.current) videoRef.current?.pause();
+      setSpotlightBox(null);
+      isClosingRef.current = false;
+      clearHoverClose();
+      return;
+    }
+
+    const centerSpotlight = () => {
+      const tile = tileRef.current;
+      if (!tile) return;
+
+      const rect = tile.getBoundingClientRect();
+      let width = Math.min(rect.width * 1.18, window.innerWidth * 0.82);
+      let height = width * (16 / 9);
+      const maxHeight = window.innerHeight * 0.86;
+
+      if (height > maxHeight) {
+        height = maxHeight;
+        width = height * (9 / 16);
+      }
+
+      setSpotlightBox({
+        left: (window.innerWidth - width) / 2,
+        top: (window.innerHeight - height) / 2,
+        width,
+        height,
+      });
+    };
+
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(centerSpotlight);
+    });
+
+    const handleScroll = () => {
+      const tile = tileRef.current;
+      if (!tile) return;
+      const rect = tile.getBoundingClientRect();
+      const isFarFromGrid = rect.bottom < -window.innerHeight * 0.6 || rect.top > window.innerHeight * 1.6;
+      if (isFarFromGrid) closeSpotlight();
+    };
+
+    window.addEventListener("resize", centerSpotlight);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame) window.cancelAnimationFrame(secondFrame);
+      window.removeEventListener("resize", centerSpotlight);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFocused]);
+
+  useEffect(
+    () => () => {
+      if (hoverCloseTimerRef.current !== null) window.clearTimeout(hoverCloseTimerRef.current);
+      if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
+    },
+    [],
+  );
+
   const toggleAudio = () => {
     const media = videoRef.current;
     if (!media || hasError) return;
 
     if (isAudioActive) {
-      media.muted = true;
-      setIsAudioActive(false);
+      resetAudio();
       return;
     }
 
@@ -80,39 +198,44 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     media
       .play()
       .then(() => setIsAudioActive(true))
-      .catch(() => {
-        media.muted = true;
-        setIsAudioActive(false);
-      });
+      .catch(() => resetAudio());
   };
 
   const focusVideo = () => {
     const tile = tileRef.current;
     if (!tile || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
+    clearHoverClose();
+    isClosingRef.current = false;
     const rect = tile.getBoundingClientRect();
-    setFocusOffset({
-      x: window.innerWidth / 2 - (rect.left + rect.width / 2),
-      y: window.innerHeight / 2 - (rect.top + rect.height / 2),
-    });
+    setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
     onFocus();
   };
+
+  const showSoundLabel = isFocused && !isAudioActive;
 
   return (
     <article
       ref={tileRef}
       aria-label={video.label}
-      className={`group relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-40" : "z-0"} ${isDimmed ? "opacity-35" : "opacity-100"}`}
+      className={`group relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-[90]" : "z-0"} ${isDimmed ? "opacity-35" : "opacity-100"}`}
       onMouseEnter={focusVideo}
-      onMouseLeave={onBlur}
+      onMouseLeave={scheduleSpotlightClose}
     >
       <div
-        className={`absolute inset-0 overflow-hidden bg-[#111113] transition-[transform,box-shadow] duration-300 ease-out ${isFocused ? "shadow-[0_30px_90px_rgba(0,0,0,.75)]" : "shadow-none"}`}
-        style={{
-          transform: isFocused
-            ? `translate3d(${focusOffset.x}px, ${focusOffset.y}px, 0) scale(1.18)`
-            : "translate3d(0, 0, 0) scale(1)",
-        }}
+        className={`${isFocused && spotlightBox ? "fixed z-[100]" : "absolute inset-0"} overflow-hidden bg-[#111113] shadow-none transition-[left,top,width,height,box-shadow] duration-300 ease-out ${isFocused ? "shadow-[0_30px_90px_rgba(0,0,0,.78)]" : ""}`}
+        style={
+          isFocused && spotlightBox
+            ? {
+                left: spotlightBox.left,
+                top: spotlightBox.top,
+                width: spotlightBox.width,
+                height: spotlightBox.height,
+              }
+            : undefined
+        }
+        onMouseEnter={clearHoverClose}
+        onMouseLeave={scheduleSpotlightClose}
       >
         <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(255,43,47,.12),transparent_62%)] text-center">
           <div className="flex flex-col items-center gap-3 text-white/38">
@@ -146,7 +269,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
             }
           }}
           onError={() => {
-            setIsAudioActive(false);
+            resetAudio();
             setHasError(true);
             setIsReady(false);
           }}
@@ -156,29 +279,46 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           {String(index + 1).padStart(2, "0")}
         </span>
 
+        {isFocused ? (
+          <button
+            type="button"
+            aria-label={`Fechar destaque de ${video.label}`}
+            onClick={(event) => {
+              event.stopPropagation();
+              closeSpotlight();
+            }}
+            className="absolute right-3 top-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white/85 backdrop-blur-md transition duration-200 hover:rotate-90 hover:border-[#ef4444]/70 hover:bg-[#ef4444] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            <X aria-hidden="true" size={21} />
+          </button>
+        ) : null}
+
         <button
           type="button"
           aria-label={isAudioActive ? `Desativar som de ${video.label}` : `Ativar som de ${video.label}`}
           aria-pressed={isAudioActive}
-          onClick={toggleAudio}
-          className={`absolute bottom-3 right-3 flex h-16 cursor-pointer items-center justify-end overflow-hidden rounded-full border border-[#ef4444]/30 bg-black/55 text-[#ef4444] shadow-xl backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/70 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${isFocused ? "w-52 gap-3 px-4" : "w-16 px-3.5"}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleAudio();
+          }}
+          className={`absolute bottom-3 right-3 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
         >
-          <span
-            className={`whitespace-nowrap text-xs font-semibold text-white/90 transition-opacity duration-200 ${isFocused ? "opacity-100" : "pointer-events-none w-0 opacity-0"}`}
-          >
-            {isAudioActive ? "Desativar som" : "Ativar som"}
-          </span>
-          <span className="relative grid size-9 shrink-0 place-items-center">
+          <span className="relative grid size-6 shrink-0 place-items-center">
             <VolumeX
               aria-hidden="true"
-              size={34}
+              size={24}
               className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-0" : "opacity-100"}`}
             />
             <Volume2
               aria-hidden="true"
-              size={34}
+              size={24}
               className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-100" : "opacity-0"}`}
             />
+          </span>
+          <span
+            className={`whitespace-nowrap text-xs font-semibold text-white/90 transition-[width,opacity] duration-200 ${showSoundLabel ? "w-auto opacity-100" : "pointer-events-none w-0 opacity-0"}`}
+          >
+            Ativar som
           </span>
         </button>
       </div>
@@ -213,7 +353,7 @@ export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
       </div>
 
       {videos.length > 0 ? (
-        <div className="grid grid-cols-1 gap-x-1.5 gap-y-0 min-[420px]:grid-cols-2 lg:grid-cols-3 lg:gap-x-2">
+        <div className="grid grid-cols-1 gap-x-1.5 gap-y-3 min-[420px]:grid-cols-2 lg:grid-cols-3 lg:gap-x-2">
           {videos.map((video, index) => (
             <GalleryVideoTile
               key={video.id}
