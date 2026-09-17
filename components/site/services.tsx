@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowUpRight, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
+import { EVENTOS_VIDEOS } from "@/lib/video-galleries";
+import { VideoGallery } from "./video-gallery";
 
 const STATS = [
   { value: 100, prefix: "+", suffix: "", label: "serviços feitos" },
@@ -20,7 +22,17 @@ function hasFinePointer() {
   return typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === true;
 }
 
-function ServiceCard({ service, index }: { service: Service; index: number }) {
+function ServiceCard({
+  service,
+  index,
+  onOpen,
+  galleryId,
+}: {
+  service: Service;
+  index: number;
+  onOpen?: () => void;
+  galleryId?: string;
+}) {
   const Icon = service.icon;
   const cardRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -67,7 +79,17 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
     <article
       ref={cardRef}
       data-video={service.video}
-      className={`service-row group relative grid gap-5 overflow-hidden py-8 sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""}`}
+      data-service-gallery={galleryId}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      aria-label={onOpen ? `Abrir galeria de vídeos de ${service.title}` : undefined}
+      className={`service-row group relative grid gap-5 overflow-hidden py-8 sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${onOpen ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff2b2f]" : ""}`}
+      onClick={onOpen}
+      onKeyDown={(event) => {
+        if (!onOpen || (event.key !== "Enter" && event.key !== " ")) return;
+        event.preventDefault();
+        onOpen();
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -196,48 +218,71 @@ function ImpactStats() {
 }
 
 export function Services() {
+  const [activeGallery, setActiveGallery] = useState<"eventos" | null>(null);
+
+  const closeGallery = () => {
+    setActiveGallery(null);
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>('[data-service-gallery="eventos"]')?.focus({ preventScroll: true });
+    });
+  };
+
   return (
     <section id="servicos" className="relative bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
       <div aria-hidden="true" className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
-          <div className="max-w-lg">
-            <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
-              <span className="size-1.5 rounded-full bg-[#ff2b2f]" />
-              Serviços
-            </p>
-            <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
-              Histórias vistas de um jeito <span className="font-serif font-normal italic text-white/58">único.</span>
-            </h2>
-            <p className="mt-6 max-w-md text-base leading-7 text-white/52 sm:text-lg">
-              Do alto ou de perto, cada filmagem é pensada para valorizar o que torna o seu projeto especial.
-            </p>
+        {activeGallery === "eventos" ? (
+          <div className="services-view-enter">
+            <VideoGallery title="Eventos" videos={EVENTOS_VIDEOS} onBack={closeGallery} />
           </div>
+        ) : (
+          <div className="services-view-enter">
+            <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
+              <div className="max-w-lg">
+                <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
+                  <span className="size-1.5 rounded-full bg-[#ff2b2f]" />
+                  Serviços
+                </p>
+                <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
+                  Histórias vistas de um jeito <span className="font-serif font-normal italic text-white/58">único.</span>
+                </h2>
+                <p className="mt-6 max-w-md text-base leading-7 text-white/52 sm:text-lg">
+                  Do alto ou de perto, cada filmagem é pensada para valorizar o que torna o seu projeto especial.
+                </p>
+              </div>
 
-          <div className="divide-y divide-white/12 border-y border-white/12">
-            {SERVICES.map((service, index) => (
-              <ServiceCard key={service.title} service={service} index={index} />
-            ))}
+              <div className="divide-y divide-white/12 border-y border-white/12">
+                {SERVICES.map((service, index) => (
+                  <ServiceCard
+                    key={service.title}
+                    service={service}
+                    index={index}
+                    onOpen={index === 0 ? () => setActiveGallery("eventos") : undefined}
+                    galleryId={index === 0 ? "eventos" : undefined}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <ImpactStats />
+
+            <div className="mt-14 flex flex-col gap-5 border-l-2 border-[#ff2b2f] pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
+              <div>
+                <p className="text-xl font-semibold tracking-[-.02em] sm:text-2xl">Tem uma ideia em mente?</p>
+                <p className="mt-1 text-sm text-white/48 sm:text-base">Conte para a gente. O orçamento é rápido e sem compromisso.</p>
+              </div>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-white px-5 text-sm font-bold text-black transition hover:bg-[#ff2b2f] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              >
+                Conversar no WhatsApp
+                <ArrowUpRight aria-hidden="true" size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            </div>
           </div>
-        </div>
-
-        <ImpactStats />
-
-        <div className="mt-14 flex flex-col gap-5 border-l-2 border-[#ff2b2f] pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
-          <div>
-            <p className="text-xl font-semibold tracking-[-.02em] sm:text-2xl">Tem uma ideia em mente?</p>
-            <p className="mt-1 text-sm text-white/48 sm:text-base">Conte para a gente. O orçamento é rápido e sem compromisso.</p>
-          </div>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-white px-5 text-sm font-bold text-black transition hover:bg-[#ff2b2f] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          >
-            Conversar no WhatsApp
-            <ArrowUpRight aria-hidden="true" size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-        </div>
+        )}
       </div>
     </section>
   );
