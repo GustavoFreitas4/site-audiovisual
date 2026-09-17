@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Film } from "lucide-react";
+import { ArrowLeft, Film, Volume2, VolumeX } from "lucide-react";
 import type { GalleryVideo } from "@/lib/video-galleries";
 
 type VideoGalleryProps = {
@@ -21,6 +21,7 @@ function GalleryVideoTile({ video, index }: { video: GalleryVideo; index: number
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isAudioActive, setIsAudioActive] = useState(false);
 
   useEffect(() => {
     const tile = tileRef.current;
@@ -50,6 +51,7 @@ function GalleryVideoTile({ video, index }: { video: GalleryVideo; index: number
           media.muted = true;
           media.pause();
         }
+        setIsAudioActive(false);
       },
       { rootMargin: "80px 0px", threshold: 0.08 },
     );
@@ -63,21 +65,24 @@ function GalleryVideoTile({ video, index }: { video: GalleryVideo; index: number
     if (!media || hasError || !supportsHoverAudio()) return;
 
     media.muted = false;
+    setIsAudioActive(true);
     media.play().catch(() => {
       media.muted = true;
+      setIsAudioActive(false);
     });
   };
 
   const disableAudio = () => {
     const media = videoRef.current;
     if (media) media.muted = true;
+    setIsAudioActive(false);
   };
 
   return (
     <article
       ref={tileRef}
       aria-label={video.label}
-      className="group relative aspect-square overflow-hidden bg-[#111113]"
+      className="group relative aspect-[9/16] overflow-hidden bg-[#111113]"
       onMouseEnter={enableAudio}
       onMouseLeave={disableAudio}
     >
@@ -113,6 +118,7 @@ function GalleryVideoTile({ video, index }: { video: GalleryVideo; index: number
           }
         }}
         onError={() => {
+          setIsAudioActive(false);
           setHasError(true);
           setIsReady(false);
         }}
@@ -120,6 +126,22 @@ function GalleryVideoTile({ video, index }: { video: GalleryVideo; index: number
 
       <span className="pointer-events-none absolute left-3 top-3 grid size-7 place-items-center rounded-full bg-black/55 text-[.65rem] font-semibold text-white/70 backdrop-blur-sm">
         {String(index + 1).padStart(2, "0")}
+      </span>
+
+      <span
+        aria-label={isAudioActive ? "Som ativado" : "Som desativado"}
+        className="pointer-events-none absolute bottom-2 right-2 grid size-9 place-items-center rounded-full border border-[#ef4444]/25 bg-black/50 text-[#ef4444] shadow-lg backdrop-blur-sm"
+      >
+        <VolumeX
+          aria-hidden="true"
+          size={18}
+          className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-0" : "opacity-100"}`}
+        />
+        <Volume2
+          aria-hidden="true"
+          size={18}
+          className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-100" : "opacity-0"}`}
+        />
       </span>
     </article>
   );
@@ -151,7 +173,7 @@ export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
       </div>
 
       {videos.length > 0 ? (
-        <div className="grid grid-cols-1 gap-1.5 min-[420px]:grid-cols-2 lg:grid-cols-3 lg:gap-2">
+        <div className="grid grid-cols-1 gap-x-1.5 gap-y-0 min-[420px]:grid-cols-2 lg:grid-cols-3 lg:gap-x-2">
           {videos.map((video, index) => (
             <GalleryVideoTile key={video.id} video={video} index={index} />
           ))}
