@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowUpRight, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
-import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS } from "@/lib/video-galleries";
+import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galleries";
 import { VideoGallery } from "./video-gallery";
 
 const STATS = [
@@ -14,10 +14,13 @@ type Service = (typeof SERVICES)[number];
 
 const SERVICE_GALLERIES = {
   eventos: { title: "Eventos", videos: EVENTOS_VIDEOS },
+  marcas: { title: "Marcas e Negócios", videos: MARCAS_VIDEOS },
   imoveis: { title: "Imóveis", videos: IMOVEIS_VIDEOS },
 } as const;
 
 type ServiceGalleryId = keyof typeof SERVICE_GALLERIES;
+
+const SERVICE_GALLERY_IDS = ["eventos", "marcas", "imoveis"] as const satisfies readonly ServiceGalleryId[];
 
 type CursorPosition = {
   x: number;
@@ -263,7 +266,7 @@ export function Services() {
 
               <div className="divide-y divide-white/12 border-y border-white/12">
                 {SERVICES.map((service, index) => {
-                  const galleryId: ServiceGalleryId | undefined = index === 0 ? "eventos" : index === 2 ? "imoveis" : undefined;
+                  const galleryId = SERVICE_GALLERY_IDS[index];
 
                   return (
                     <ServiceCard
