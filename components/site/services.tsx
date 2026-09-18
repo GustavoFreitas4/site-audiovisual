@@ -7,7 +7,7 @@ import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galle
 import { VideoGallery } from "./video-gallery";
 
 const STATS = [
-  { value: 100, prefix: "+", suffix: "", label: "serviços feitos" },
+  { value: 100, prefix: "+", suffix: "", label: "produções entregues" },
 ] as const;
 
 type Service = (typeof SERVICES)[number];
@@ -215,7 +215,7 @@ function ImpactStats() {
     <div ref={statsRef} className="mx-auto mt-14 grid max-w-sm grid-cols-1 justify-items-center gap-8 border-y border-white/10 py-10 text-center sm:mt-20 sm:py-12">
       {STATS.map((stat, index) => (
         <div key={stat.label}>
-          <p className="text-[clamp(2.2rem,6vw,3.8rem)] font-semibold leading-none tracking-[-.065em] text-white">
+          <p className="font-serif text-[clamp(2.2rem,6vw,3.8rem)] font-normal italic leading-none tracking-[-.04em] text-[#ff2b2f]">
             {stat.prefix}
             {counts[index].toLocaleString("pt-BR")}
             {stat.suffix}
