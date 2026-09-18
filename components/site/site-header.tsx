@@ -10,10 +10,6 @@ export function Header() {
           </span>
         </a>
 
-        <nav aria-label="Navegação principal" className="col-start-2 justify-self-center text-xs font-medium text-white/65 md:absolute md:left-1/2 md:-translate-x-1/2 md:text-sm">
-          <a className="transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white" href="#servicos">Serviços</a>
-        </nav>
-
         <div className="col-start-3 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <a
             href="https://www.instagram.com/doskydrone/"

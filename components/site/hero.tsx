@@ -33,11 +33,7 @@ export function Hero() {
             Vídeos que valorizam os <span className="font-serif font-normal italic tracking-[-.045em] text-white/92">momentos.</span>
           </h1>
 
-          <p className="hero-enter hero-enter-3 mt-6 max-w-lg text-pretty text-base leading-7 text-white/68 sm:text-lg">
-            Um novo ponto de vista para eventos, marcas e imóveis em todo o estado de São Paulo.
-          </p>
-
-          <div className="hero-enter hero-enter-4 mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+          <div className="hero-enter hero-enter-3 mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <a
               href={WHATSAPP_URL}
               target="_blank"
@@ -60,12 +56,11 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="grid gap-4 border-t border-white/20 pt-6 text-white/70 sm:grid-cols-[1fr_auto] sm:items-center">
-          <div className="flex items-center gap-2 text-sm">
+        <div className="border-t border-white/20 pt-6">
+          <div className="flex items-center gap-2 text-base font-semibold text-[#ff2b2f] sm:text-lg">
             <MapPin aria-hidden="true" size={16} className="text-[#ff2b2f]" />
             Atendimento em todo o estado de São Paulo
           </div>
-          <p className="text-[.7rem] font-semibold uppercase tracking-[.22em] text-white/45">Aéreo + terrestre / 2026</p>
         </div>
       </div>
     </section>
