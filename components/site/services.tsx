@@ -216,7 +216,7 @@ function ImpactStats() {
       {STATS.map((stat, index) => (
         <div key={stat.label}>
           <p className="font-serif text-[clamp(2.2rem,6vw,3.8rem)] font-normal italic leading-none tracking-[-.04em] text-[#ff2b2f]">
-            {stat.prefix}
+            <span className="inline-block -skew-x-6 font-serif italic">{stat.prefix}</span>
             {counts[index].toLocaleString("pt-BR")}
             {stat.suffix}
           </p>
