@@ -171,28 +171,25 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       .catch(() => resetAudio());
   };
 
-  const openSpotlight = (enableSound: boolean) => {
+  const openSpotlight = () => {
     const tile = tileRef.current;
     if (!tile || isFocused || isClosingRef.current) return;
 
+    resetAudio();
     isClosingRef.current = false;
     const rect = tile.getBoundingClientRect();
     setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
     onFocus();
-    if (enableSound) activateAudio();
   };
 
   const handleSoundClick = () => {
-    if (!isFocused) {
-      openSpotlight(true);
-      return;
-    }
+    if (!isFocused) return;
 
     if (isAudioActive) resetAudio();
     else activateAudio();
   };
 
-  const showSoundLabel = isFocused && !isAudioActive;
+  const showSoundLabel = !isAudioActive;
 
   return (
     <article
@@ -256,7 +253,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           aria-label={`Destacar ${video.label}`}
           disabled={isFocused}
           tabIndex={isFocused ? -1 : 0}
-          onClick={() => openSpotlight(false)}
+          onClick={openSpotlight}
           className={`absolute inset-0 z-[1] bg-transparent ${isFocused ? "cursor-default" : "cursor-pointer"}`}
         />
 
@@ -278,34 +275,36 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           </button>
         ) : null}
 
-        <button
-          type="button"
-          aria-label={isAudioActive ? `Desativar som de ${video.label}` : `Ativar som de ${video.label}`}
-          aria-pressed={isAudioActive}
-          onClick={(event) => {
-            event.stopPropagation();
-            handleSoundClick();
-          }}
-          className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
-        >
-          <span className="relative grid size-6 shrink-0 place-items-center">
-            <VolumeX
-              aria-hidden="true"
-              size={24}
-              className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-0" : "opacity-100"}`}
-            />
-            <Volume2
-              aria-hidden="true"
-              size={24}
-              className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-100" : "opacity-0"}`}
-            />
-          </span>
-          <span
-            className={`whitespace-nowrap text-xs font-semibold text-white/90 transition-[width,opacity] duration-200 ${showSoundLabel ? "w-auto opacity-100" : "pointer-events-none w-0 opacity-0"}`}
+        {isFocused ? (
+          <button
+            type="button"
+            aria-label={isAudioActive ? `Desativar som de ${video.label}` : `Ativar som de ${video.label}`}
+            aria-pressed={isAudioActive}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleSoundClick();
+            }}
+            className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
           >
-            Ativar som
-          </span>
-        </button>
+            <span className="relative grid size-6 shrink-0 place-items-center">
+              <VolumeX
+                aria-hidden="true"
+                size={24}
+                className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-0" : "opacity-100"}`}
+              />
+              <Volume2
+                aria-hidden="true"
+                size={24}
+                className={`absolute transition-opacity duration-200 ${isAudioActive ? "opacity-100" : "opacity-0"}`}
+              />
+            </span>
+            <span
+              className={`whitespace-nowrap text-xs font-semibold text-white/90 transition-[width,opacity] duration-200 ${showSoundLabel ? "w-auto opacity-100" : "pointer-events-none w-0 opacity-0"}`}
+            >
+              Ativar som
+            </span>
+          </button>
+        ) : null}
       </div>
     </article>
   );
