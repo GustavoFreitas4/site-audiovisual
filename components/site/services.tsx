@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowUpRight, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
-import { EVENTOS_VIDEOS } from "@/lib/video-galleries";
+import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS } from "@/lib/video-galleries";
 import { VideoGallery } from "./video-gallery";
 
 const STATS = [
@@ -11,6 +11,13 @@ const STATS = [
 ] as const;
 
 type Service = (typeof SERVICES)[number];
+
+const SERVICE_GALLERIES = {
+  eventos: { title: "Eventos", videos: EVENTOS_VIDEOS },
+  imoveis: { title: "Imóveis", videos: IMOVEIS_VIDEOS },
+} as const;
+
+type ServiceGalleryId = keyof typeof SERVICE_GALLERIES;
 
 type CursorPosition = {
   x: number;
@@ -218,12 +225,15 @@ function ImpactStats() {
 }
 
 export function Services() {
-  const [activeGallery, setActiveGallery] = useState<"eventos" | null>(null);
+  const [activeGallery, setActiveGallery] = useState<ServiceGalleryId | null>(null);
+  const activeGalleryConfig = activeGallery ? SERVICE_GALLERIES[activeGallery] : null;
 
   const closeGallery = () => {
+    const galleryToRestore = activeGallery;
     setActiveGallery(null);
     requestAnimationFrame(() => {
-      document.querySelector<HTMLElement>('[data-service-gallery="eventos"]')?.focus({ preventScroll: true });
+      if (!galleryToRestore) return;
+      document.querySelector<HTMLElement>(`[data-service-gallery="${galleryToRestore}"]`)?.focus({ preventScroll: true });
     });
   };
 
@@ -231,9 +241,9 @@ export function Services() {
     <section id="servicos" className="relative bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
       <div aria-hidden="true" className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="mx-auto max-w-[1440px]">
-        {activeGallery === "eventos" ? (
+        {activeGalleryConfig ? (
           <div className="services-view-enter">
-            <VideoGallery title="Eventos" videos={EVENTOS_VIDEOS} onBack={closeGallery} />
+            <VideoGallery title={activeGalleryConfig.title} videos={activeGalleryConfig.videos} onBack={closeGallery} />
           </div>
         ) : (
           <div className="services-view-enter">
@@ -252,15 +262,19 @@ export function Services() {
               </div>
 
               <div className="divide-y divide-white/12 border-y border-white/12">
-                {SERVICES.map((service, index) => (
-                  <ServiceCard
-                    key={service.title}
-                    service={service}
-                    index={index}
-                    onOpen={index === 0 ? () => setActiveGallery("eventos") : undefined}
-                    galleryId={index === 0 ? "eventos" : undefined}
-                  />
-                ))}
+                {SERVICES.map((service, index) => {
+                  const galleryId: ServiceGalleryId | undefined = index === 0 ? "eventos" : index === 2 ? "imoveis" : undefined;
+
+                  return (
+                    <ServiceCard
+                      key={service.title}
+                      service={service}
+                      index={index}
+                      onOpen={galleryId ? () => setActiveGallery(galleryId) : undefined}
+                      galleryId={galleryId}
+                    />
+                  );
+                })}
               </div>
             </div>
 
