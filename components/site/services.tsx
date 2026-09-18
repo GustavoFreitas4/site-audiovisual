@@ -257,7 +257,7 @@ export function Services() {
                   Histórias vistas de um jeito <span className="font-serif font-normal italic text-white/58">único.</span>
                 </h2>
                 <p className="mt-6 max-w-md text-base leading-7 text-white/52 sm:text-lg">
-                  Do alto ou de perto, cada filmagem é pensada para valorizar o que torna o seu projeto especial.
+                  Imagens que valorizam detalhes, momentos e histórias de verdade.
                 </p>
               </div>
 
