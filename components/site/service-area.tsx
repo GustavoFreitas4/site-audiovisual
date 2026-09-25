@@ -25,7 +25,7 @@ function MapPin({ x, y, primary, name }: (typeof COVERAGE_POINTS)[number]) {
   return (
     <g transform={`translate(${x} ${y}) scale(${scale})`}>
       <title>{name}</title>
-      <circle className="service-area-pin-pulse" r={primary ? 16 : 12} fill="none" stroke="#43a6ae" strokeWidth="1.5" opacity=".62" />
+      {!primary && <circle className="service-area-pin-pulse" r="12" fill="none" stroke="#43a6ae" strokeWidth="1.5" opacity=".62" />}
       <path
         d="M0-11a8.5 8.5 0 0 0-8.5 8.5C-8.5 3.7 0 12 0 12S8.5 3.7 8.5-2.5A8.5 8.5 0 0 0 0-11Z"
         fill="#0d5c63"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { ArrowUpRight, Play } from "lucide-react";
+import { ArrowDown, ArrowUpRight, MousePointerClick, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galleries";
 import { VideoGallery } from "./video-gallery";
@@ -262,20 +262,33 @@ export function Services() {
                 </h2>
               </div>
 
-              <div className="divide-y divide-white/12 border-y border-white/12">
-                {SERVICES.map((service, index) => {
-                  const galleryId = SERVICE_GALLERY_IDS[index];
+              <div>
+                <button
+                  type="button"
+                  onClick={() => document.querySelector<HTMLElement>('[data-service-gallery="eventos"]')?.focus({ preventScroll: true })}
+                  className="group mb-5 inline-flex cursor-pointer items-center gap-3 rounded-full border border-primary/45 bg-primary/10 px-4 py-2.5 text-sm font-semibold tracking-[.01em] text-white transition duration-300 hover:border-primary-readable/70 hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable sm:mb-6 sm:text-base"
+                  aria-label="Ir para os cards e explorar os serviços"
+                >
+                  <MousePointerClick aria-hidden="true" size={19} className="text-primary-readable transition-transform duration-300 group-hover:scale-110" />
+                  Clique abaixo para explorar
+                  <ArrowDown aria-hidden="true" size={17} className="animate-bounce text-primary-readable" />
+                </button>
 
-                  return (
-                    <ServiceCard
-                      key={service.title}
-                      service={service}
-                      index={index}
-                      onOpen={galleryId ? () => setActiveGallery(galleryId) : undefined}
-                      galleryId={galleryId}
-                    />
-                  );
-                })}
+                <div className="divide-y divide-white/12 border-y border-white/12">
+                  {SERVICES.map((service, index) => {
+                    const galleryId = SERVICE_GALLERY_IDS[index];
+
+                    return (
+                      <ServiceCard
+                        key={service.title}
+                        service={service}
+                        index={index}
+                        onOpen={galleryId ? () => setActiveGallery(galleryId) : undefined}
+                        galleryId={galleryId}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
