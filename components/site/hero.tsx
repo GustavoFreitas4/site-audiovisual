@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
-import { Header } from "./site-header";
 import { WHATSAPP_URL } from "@/lib/site-data";
 
 export function Hero() {
@@ -17,8 +16,6 @@ export function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,3,4,.38)_0%,rgba(3,3,4,.08)_28%,rgba(3,3,4,.48)_68%,#080809_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.84)_0%,rgba(0,0,0,.6)_48%,rgba(0,0,0,.18)_100%)] max-sm:bg-[linear-gradient(180deg,rgba(0,0,0,.56)_0%,rgba(0,0,0,.22)_34%,rgba(0,0,0,.78)_70%,rgba(8,8,9,.96)_100%)]" />
       <div aria-hidden="true" className="film-grain absolute inset-0 opacity-[.13]" />
-
-      <Header />
 
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 

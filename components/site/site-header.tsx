@@ -1,9 +1,28 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateHeader = () => setIsScrolled(window.scrollY > 20);
+
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeader);
+  }, []);
+
   return (
-    <header className="absolute inset-x-0 top-0 z-20">
-      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-white/16 px-5 py-4 sm:gap-4 sm:px-8 lg:px-14 xl:px-20">
+    <header
+      className={`site-header fixed inset-x-0 top-0 z-[70] border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
+        isScrolled
+          ? "border-white/10 bg-black/80 shadow-[0_12px_40px_rgba(0,0,0,.32)] backdrop-blur-xl"
+          : "border-transparent bg-black/20 shadow-none backdrop-blur-[3px]"
+      }`}
+    >
+      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-4 sm:gap-4 sm:px-8 lg:px-14 xl:px-20">
         <a href="#inicio" aria-label="Gustavo Freitas — início" className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
           <span className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0">
             <Image
