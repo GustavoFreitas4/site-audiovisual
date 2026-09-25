@@ -9,18 +9,20 @@
   --card-foreground: #f7f7f5;
   --popover: #111113;
   --popover-foreground: #f7f7f5;
-  --primary: #ff2b2f;
+  --primary: #0d5c63;
+  --primary-hover: #0a4a50;
+  --primary-readable: #43a6ae;
   --primary-foreground: #ffffff;
   --secondary: #19191c;
   --secondary-foreground: #f7f7f5;
   --muted: #19191c;
   --muted-foreground: #a3a3a7;
-  --accent: #ff2b2f;
+  --accent: #0d5c63;
   --accent-foreground: #ffffff;
-  --destructive: #ff2b2f;
+  --destructive: #0d5c63;
   --border: #ffffff1f;
   --input: #ffffff24;
-  --ring: #ff2b2f;
+  --ring: #0d5c63;
   --radius: 1rem;
 }
 
@@ -32,6 +34,8 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-readable: var(--primary-readable);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -69,7 +73,7 @@ body {
 }
 
 ::selection {
-  background: #ff2b2f;
+  background: var(--primary);
   color: #fff;
 }
 
@@ -97,7 +101,7 @@ body {
   position: absolute;
   inset: 0 -1.25rem;
   z-index: 0;
-  background: linear-gradient(90deg, rgba(255,43,47,.08), transparent 70%);
+  background: linear-gradient(90deg, rgba(13,92,99,.1), transparent 70%);
   opacity: 0;
   transition: opacity .3s ease;
   pointer-events: none;
@@ -114,7 +118,7 @@ body {
   bottom: 0;
   z-index: 1;
   height: 2px;
-  background: linear-gradient(90deg, #ef4444 0%, rgba(239, 68, 68, 0) 78%);
+  background: linear-gradient(90deg, var(--primary) 0%, rgba(13, 92, 99, 0) 78%);
   opacity: 0;
   transform: scaleX(0);
   transform-origin: left;

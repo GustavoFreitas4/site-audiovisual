@@ -210,7 +210,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
             : undefined
         }
       >
-        <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(255,43,47,.12),transparent_62%)] text-center">
+        <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(13,92,99,.16),transparent_62%)] text-center">
           <div className="flex flex-col items-center gap-3 text-white/38">
             <span className="grid size-12 place-items-center rounded-full border border-white/12 bg-black/25">
               <Film aria-hidden="true" size={20} strokeWidth={1.5} />
@@ -269,7 +269,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               event.stopPropagation();
               closeSpotlight();
             }}
-            className="absolute right-3 top-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white/85 backdrop-blur-md transition duration-200 hover:rotate-90 hover:border-[#ef4444]/70 hover:bg-[#ef4444] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="absolute right-3 top-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white/85 backdrop-blur-md transition duration-200 hover:rotate-90 hover:border-primary/70 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
             <X aria-hidden="true" size={21} />
           </button>
@@ -284,7 +284,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               event.stopPropagation();
               handleSoundClick();
             }}
-            className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-[#ef4444]/35 bg-black/60 text-[#ef4444] shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-[#ef4444]/75 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ef4444] ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
+            className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-primary/50 bg-black/60 text-primary-readable shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-primary-readable/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
           >
             <span className="relative grid size-6 shrink-0 place-items-center">
               <VolumeX
@@ -356,14 +356,14 @@ export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
     <section ref={galleryRef} aria-label={`Galeria de vídeos de ${title}`}>
       <div className="mb-8 flex flex-col gap-6 border-b border-white/12 pb-7 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[.22em] text-[#ff2b2f]">Galeria de vídeos</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[.22em] text-primary-readable">Galeria de vídeos</p>
           <h2 className="text-[clamp(2.8rem,8vw,5.5rem)] font-semibold leading-[.9] tracking-[-.06em] text-white">{title}</h2>
         </div>
         <button
           ref={backButtonRef}
           type="button"
           onClick={leaveGallery}
-          className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full border border-white/15 bg-white/[.04] px-5 text-sm font-semibold text-white/78 transition duration-300 hover:-translate-y-0.5 hover:border-[#ff2b2f]/70 hover:bg-[#ff2b2f] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full border border-white/15 bg-white/[.04] px-5 text-sm font-semibold text-white/78 transition duration-300 hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           <ArrowLeft aria-hidden="true" size={17} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
           Voltar aos serviços

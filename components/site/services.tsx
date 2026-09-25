@@ -93,7 +93,7 @@ function ServiceCard({
       role={onOpen ? "button" : undefined}
       tabIndex={onOpen ? 0 : undefined}
       aria-label={onOpen ? `Abrir galeria de vídeos de ${service.title}` : undefined}
-      className={`service-row group relative grid gap-5 overflow-hidden py-8 sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${onOpen ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff2b2f]" : ""}`}
+      className={`service-row group relative grid gap-5 overflow-hidden py-8 sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${onOpen ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : ""}`}
       onClick={onOpen}
       onKeyDown={(event) => {
         if (!onOpen || (event.key !== "Enter" && event.key !== " ")) return;
@@ -122,7 +122,7 @@ function ServiceCard({
       />
       <div aria-hidden="true" className="service-video-overlay pointer-events-none absolute inset-0" />
 
-      <span className="relative z-[2] origin-left text-sm font-semibold tracking-[.16em] text-[#ff2b2f]/60 transition duration-300 group-hover:scale-105 group-hover:text-[#ff2b2f] group-hover:opacity-100">
+      <span className="relative z-[2] origin-left text-sm font-semibold tracking-[.16em] text-primary-readable/70 transition duration-300 group-hover:scale-105 group-hover:text-primary-readable group-hover:opacity-100">
         0{index + 1}
       </span>
       <div className="relative z-[2]">
@@ -136,20 +136,20 @@ function ServiceCard({
             <li
               key={tag}
               title={tag}
-              className="rounded-full border border-white/12 px-3 py-1.5 text-xs font-medium text-white/48 transition duration-200 hover:-translate-y-0.5 hover:border-[#ef4444]/55 hover:bg-[#ef4444]/15 hover:text-white"
+              className="rounded-full border border-white/12 px-3 py-1.5 text-xs font-medium text-white/48 transition duration-200 hover:-translate-y-0.5 hover:border-primary/55 hover:bg-primary/15 hover:text-white"
             >
               {tag}
             </li>
           ))}
         </ul>
       </div>
-      <div className="relative z-[2] hidden size-14 place-items-center rounded-full border border-white/12 text-white/50 transition duration-300 group-hover:scale-110 group-hover:rotate-[7deg] group-hover:border-[#ff2b2f]/70 group-hover:bg-[#ff2b2f] group-hover:text-white sm:grid">
+      <div className="relative z-[2] hidden size-14 place-items-center rounded-full border border-white/12 text-white/50 transition duration-300 group-hover:scale-110 group-hover:rotate-[7deg] group-hover:border-primary/70 group-hover:bg-primary group-hover:text-white sm:grid">
         <Icon aria-hidden="true" size={23} strokeWidth={1.6} />
       </div>
 
       <div
         aria-hidden="true"
-        className={`service-cursor pointer-events-none absolute z-20 size-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-[#ef4444] text-white shadow-[0_10px_30px_rgba(239,68,68,.35)] transition duration-200 ${cursor.visible ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}
+        className={`service-cursor pointer-events-none absolute z-20 size-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-primary text-white shadow-[0_10px_30px_rgba(13,92,99,.4)] transition duration-200 ${cursor.visible ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}
         style={{ left: cursor.x, top: cursor.y }}
       >
         <Play size={13} fill="currentColor" strokeWidth={1.5} />
@@ -215,7 +215,7 @@ function ImpactStats() {
     <div ref={statsRef} className="mx-auto mt-14 grid max-w-sm grid-cols-1 justify-items-center gap-8 border-y border-white/10 py-10 text-center sm:mt-20 sm:py-12">
       {STATS.map((stat, index) => (
         <div key={stat.label}>
-          <p className="font-serif text-[clamp(2.2rem,6vw,3.8rem)] font-normal italic leading-none tracking-[-.04em] text-[#ff2b2f]">
+          <p className="font-serif text-[clamp(2.2rem,6vw,3.8rem)] font-normal italic leading-none tracking-[-.04em] text-primary-readable">
             <span className="inline-block -skew-x-6 font-serif italic">{stat.prefix}</span>
             {counts[index].toLocaleString("pt-BR")}
             {stat.suffix}
@@ -253,7 +253,7 @@ export function Services() {
             <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
               <div className="max-w-lg">
                 <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
-                  <span className="size-1.5 rounded-full bg-[#ff2b2f]" />
+                  <span className="size-1.5 rounded-full bg-primary" />
                   Serviços
                 </p>
                 <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
@@ -283,7 +283,7 @@ export function Services() {
 
             <ImpactStats />
 
-            <div className="mt-14 flex flex-col gap-5 border-l-2 border-[#ff2b2f] pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
+            <div className="mt-14 flex flex-col gap-5 border-l-2 border-primary pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
               <div>
                 <p className="text-xl font-semibold tracking-[-.02em] sm:text-2xl">Tem uma ideia em mente?</p>
                 <p className="mt-1 text-sm text-white/48 sm:text-base">Conte para a gente. O orçamento é rápido e sem compromisso.</p>
@@ -292,7 +292,7 @@ export function Services() {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-white px-5 text-sm font-bold text-black transition hover:bg-[#ff2b2f] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-white px-5 text-sm font-bold text-black transition hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 Conversar no WhatsApp
                 <ArrowUpRight aria-hidden="true" size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
