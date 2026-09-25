@@ -45,7 +45,7 @@ export function ServiceArea() {
           Atendemos toda <strong className="font-semibold text-white">BAIXADA SANTISTA</strong> e estado de <strong className="font-semibold text-white">SÃO PAULO</strong>
         </h2>
 
-        <div className="mt-10 sm:mt-14">
+        <div className="mx-auto mt-7 w-[82%] max-w-[1000px] sm:mt-10 sm:w-[72%] lg:w-[70%]">
           <svg
             viewBox="90 0 730 520"
             preserveAspectRatio="xMidYMid meet"
