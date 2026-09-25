@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { WHATSAPP_URL } from "@/lib/site-data";
 
 export function Hero() {
@@ -53,12 +53,6 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 pt-6">
-          <div className="flex items-center gap-2 text-base font-semibold text-primary-readable sm:text-lg">
-            <MapPin aria-hidden="true" size={16} className="text-primary-readable" />
-            Atendimento em todo o estado de São Paulo
-          </div>
-        </div>
       </div>
     </section>
   );

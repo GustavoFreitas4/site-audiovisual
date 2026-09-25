@@ -7,15 +7,16 @@ export function Footer() {
         <a
           href="#inicio"
           aria-label="Gustavo Freitas — voltar ao início"
-          className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0 transition duration-300 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          className="block w-[clamp(9.5rem,28vw,13.5rem)] shrink-0 transition duration-300 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           <Image
-            src="/gustavo-freitas-videomaker-logo.png"
+            src="/gustavo-freitas-videomaker-logo-hd.png"
             alt="Gustavo Freitas Videomaker"
-            width={590}
-            height={184}
-            sizes="(max-width: 639px) 240px, 368px"
+            width={1770}
+            height={552}
+            sizes="(max-width: 639px) 152px, 216px"
             className="h-auto w-full object-contain"
+            unoptimized
           />
         </a>
 
