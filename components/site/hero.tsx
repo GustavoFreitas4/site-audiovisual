@@ -7,15 +7,15 @@ export function Hero() {
   return (
     <section id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-black sm:min-h-[840px] lg:min-h-[900px]">
       <Image
-        src="/hero-baixada.webp"
-        alt="Vista aérea cinematográfica do litoral de São Paulo ao pôr do sol"
+        src="/imagens/hero-drone.jpg"
+        alt="Pessoa segurando um drone diante de uma escultura vermelha no litoral"
         fill
         priority
         sizes="100vw"
-        className="hero-image object-cover object-[58%_center] sm:object-[62%_center]"
+        className="hero-image object-cover object-[62%_center] sm:object-[58%_center] lg:object-[50%_52%]"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,3,4,.5)_0%,rgba(3,3,4,.08)_25%,rgba(3,3,4,.48)_64%,#080809_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,4,5,.92)_0%,rgba(4,4,5,.62)_34%,rgba(4,4,5,.06)_72%)] max-sm:bg-[linear-gradient(180deg,rgba(4,4,5,.72)_0%,rgba(4,4,5,.18)_36%,rgba(4,4,5,.86)_72%,#080809_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,3,4,.38)_0%,rgba(3,3,4,.08)_28%,rgba(3,3,4,.48)_68%,#080809_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.84)_0%,rgba(0,0,0,.6)_48%,rgba(0,0,0,.18)_100%)] max-sm:bg-[linear-gradient(180deg,rgba(0,0,0,.56)_0%,rgba(0,0,0,.22)_34%,rgba(0,0,0,.78)_70%,rgba(8,8,9,.96)_100%)]" />
       <div aria-hidden="true" className="film-grain absolute inset-0 opacity-[.13]" />
 
       <Header />
