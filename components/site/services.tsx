@@ -250,7 +250,7 @@ export function Services() {
           </div>
         ) : (
           <div className="services-view-enter">
-            <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
+            <div className="grid gap-8 sm:gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
               <div className="max-w-lg">
                 <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
                   <span className="size-1.5 rounded-full bg-primary" />
@@ -259,9 +259,6 @@ export function Services() {
                 <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
                   Histórias vistas de um jeito <span className="font-serif font-normal italic text-white/58">único.</span>
                 </h2>
-                <p className="mt-6 max-w-md text-base leading-7 text-white/52 sm:text-lg">
-                  Imagens que valorizam detalhes, momentos e histórias de verdade.
-                </p>
               </div>
 
               <div className="divide-y divide-white/12 border-y border-white/12">

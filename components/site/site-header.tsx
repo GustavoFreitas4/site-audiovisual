@@ -3,14 +3,22 @@ import Image from "next/image";
 export function Header() {
   return (
     <header className="absolute inset-x-0 top-0 z-20">
-      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[auto_minmax(0,1fr)_auto] items-center border-b border-white/16 px-5 py-4 sm:px-8 lg:px-14 xl:px-20">
-        <a href="#inicio" aria-label="DOSKY Drone — início" className="col-start-1 flex shrink-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-          <span className="relative size-12 overflow-hidden rounded-full border border-white/20 bg-white shadow-[0_6px_24px_rgba(0,0,0,.25)] sm:size-14">
-            <Image src="/dosky-logo.png" alt="" fill sizes="56px" className="object-cover" />
+      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-white/16 px-5 py-4 sm:gap-4 sm:px-8 lg:px-14 xl:px-20">
+        <a href="#inicio" aria-label="Gustavo Freitas — início" className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+          <span className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0">
+            <Image
+              src="/gustavo-freitas-logo.png"
+              alt="Gustavo Freitas"
+              width={2170}
+              height={725}
+              priority
+              sizes="(max-width: 639px) 128px, 184px"
+              className="h-auto w-full object-contain"
+            />
           </span>
         </a>
 
-        <div className="col-start-3 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <div className="col-start-2 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <a
             href="https://www.instagram.com/doskydrone/"
             target="_blank"
