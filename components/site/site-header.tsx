@@ -22,7 +22,7 @@ export function Header() {
           : "border-transparent bg-black/20 shadow-none backdrop-blur-[3px]"
       }`}
     >
-      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-4 sm:gap-4 sm:px-8 lg:px-14 xl:px-20">
+      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-14 xl:px-20">
         <a href="#inicio" aria-label="Gustavo Freitas — início" className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
           <span className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0">
             <Image
