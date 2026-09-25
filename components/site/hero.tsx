@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-black sm:min-h-[840px] lg:min-h-[900px]">
       <Image
-        src="/imagens/hero-drone.jpg"
+        src="/images/hero-drone.jpg?v=2"
         alt="Pessoa segurando um drone diante de uma escultura vermelha no litoral"
         fill
         priority
