@@ -3,7 +3,7 @@ const SAO_PAULO_PATH =
 
 // Pontos provisórios de cobertura; a lista fica pronta para receber as cidades definitivas.
 const COVERAGE_POINTS = [
-  { name: "Baixada Santista", x: 616.3, y: 370.5, primary: true },
+  { name: "Baixada Santista", x: 602, y: 342, primary: true },
   { name: "Região Metropolitana de São Paulo", x: 594.6, y: 338.5, primary: false },
   { name: "Região de Campinas", x: 563.8, y: 288, primary: false },
   { name: "Vale do Paraíba", x: 647.5, y: 312.9, primary: false },
@@ -12,6 +12,11 @@ const COVERAGE_POINTS = [
   { name: "Noroeste Paulista", x: 396.5, y: 124.2, primary: false },
   { name: "Oeste Paulista", x: 251.1, y: 226.6, primary: false },
   { name: "Região de Sorocaba", x: 535.4, y: 334.6, primary: false },
+  { name: "Região de Marília", x: 355.3, y: 233.9, primary: false },
+  { name: "Região de Araraquara", x: 483.4, y: 201.1, primary: false },
+  { name: "Região de Piracicaba", x: 521.2, y: 273.9, primary: false },
+  { name: "Vale do Ribeira", x: 507.2, y: 412.6, primary: false },
+  { name: "Região de Itapeva", x: 432.6, y: 372.2, primary: false },
 ] as const;
 
 function MapPin({ x, y, primary, name }: (typeof COVERAGE_POINTS)[number]) {
@@ -35,25 +40,19 @@ function MapPin({ x, y, primary, name }: (typeof COVERAGE_POINTS)[number]) {
 
 export function ServiceArea() {
   return (
-    <section aria-labelledby="service-area-title" className="relative overflow-hidden bg-[#050606] px-5 py-20 text-white sm:px-8 sm:py-28 lg:px-14 xl:px-20">
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="mx-auto max-w-[1440px]">
+    <div aria-labelledby="service-area-title" className="mt-20 text-white sm:mt-28">
         <h2 id="service-area-title" className="max-w-[18ch] text-balance text-[clamp(2.15rem,7vw,5rem)] font-normal leading-[1.04] tracking-[-.045em] text-white/52">
           Atendemos toda <strong className="font-semibold text-white">BAIXADA SANTISTA</strong> e estado de <strong className="font-semibold text-white">SÃO PAULO</strong>
         </h2>
 
-        <div className="mt-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#050808] shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:mt-14 sm:rounded-[2rem]">
-          <svg viewBox="0 0 900 520" role="img" aria-labelledby="sp-map-title sp-map-description" className="block h-auto w-full">
+        <div className="mt-10 sm:mt-14">
+          <svg viewBox="0 0 900 520" role="img" aria-labelledby="sp-map-title sp-map-description" className="block h-auto w-full overflow-visible">
             <title id="sp-map-title">Mapa da área de atendimento em São Paulo</title>
             <desc id="sp-map-description">Contorno do estado de São Paulo com a Baixada Santista em destaque e pontos de cobertura distribuídos pelo estado.</desc>
             <defs>
               <pattern id="serviceGrid" width="36" height="36" patternUnits="userSpaceOnUse">
                 <path d="M36 0H0V36" fill="none" stroke="#43a6ae" strokeOpacity=".12" strokeWidth="1" />
               </pattern>
-              <radialGradient id="mapBackdrop" cx="62%" cy="64%" r="62%">
-                <stop offset="0" stopColor="#0d5c63" stopOpacity=".18" />
-                <stop offset="1" stopColor="#050808" stopOpacity="0" />
-              </radialGradient>
               <filter id="mapGlow" x="-30%" y="-30%" width="160%" height="160%">
                 <feGaussianBlur stdDeviation="6" result="blur" />
                 <feMerge>
@@ -73,23 +72,19 @@ export function ServiceArea() {
               </clipPath>
             </defs>
 
-            <rect width="900" height="520" fill="#050808" />
-            <rect width="900" height="520" fill="url(#serviceGrid)" opacity=".7" />
-            <rect width="900" height="520" fill="url(#mapBackdrop)" />
-
-            <path d={SAO_PAULO_PATH} fill="#091416" stroke="#0d5c63" strokeWidth="11" opacity=".65" filter="url(#mapGlow)" />
+            <path d={SAO_PAULO_PATH} fill="none" stroke="#0d5c63" strokeWidth="11" opacity=".65" filter="url(#mapGlow)" />
             <g clipPath="url(#stateClip)">
               <rect x="90" y="18" width="720" height="480" fill="url(#serviceGrid)" opacity="1" />
-              <rect x="90" y="18" width="720" height="480" fill="#0d5c63" opacity=".08" />
             </g>
             <path d={SAO_PAULO_PATH} fill="none" stroke="#43a6ae" strokeWidth="2.4" strokeLinejoin="round" filter="url(#mapGlow)" />
 
-            {COVERAGE_POINTS.map((point) => (
-              <MapPin key={point.name} {...point} />
-            ))}
+            <g clipPath="url(#stateClip)">
+              {COVERAGE_POINTS.map((point) => (
+                <MapPin key={point.name} {...point} />
+              ))}
+            </g>
           </svg>
         </div>
-      </div>
-    </section>
+    </div>
   );
 }

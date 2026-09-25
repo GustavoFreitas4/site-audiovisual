@@ -5,6 +5,7 @@ import { ArrowUpRight, Play } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galleries";
 import { VideoGallery } from "./video-gallery";
+import { ServiceArea } from "./service-area";
 
 const STATS = [
   { value: 100, prefix: "+", suffix: "", label: "produções entregues" },
@@ -277,6 +278,8 @@ export function Services() {
                 })}
               </div>
             </div>
+
+            <ServiceArea />
 
             <ImpactStats />
 
