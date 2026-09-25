@@ -1,7 +1,7 @@
 import { Building2, Megaphone, PartyPopper } from "lucide-react";
 
 export const WHATSAPP_URL =
-  "https://wa.me/13981197505?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20DOSKY%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento.";
+  "https://wa.me/13981197505?text=Ol%C3%A1%21%20Vim%20pelo%20site%20do%20Gustavo%20Videomaker%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento.";
 
 export const SERVICES = [
   {

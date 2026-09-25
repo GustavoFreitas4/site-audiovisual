@@ -39,10 +39,10 @@ export function Header() {
 
         <div className="col-start-2 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <a
-            href="https://www.instagram.com/doskydrone/"
+            href="https://www.instagram.com/gustavofmaker"
             target="_blank"
             rel="noreferrer"
-            aria-label="Instagram da DOSKY"
+            aria-label="Instagram de Gustavo Freitas — @gustavofmaker"
             title="Instagram"
             className="group inline-flex h-11 w-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-[#ef2d8e]/70 bg-[radial-gradient(circle_at_30%_115%,#f68c1e_0%,#f36141_32%,#ef2d8e_56%,#c82f92_80%,#553592_100%)] p-0 text-[11px] font-semibold text-white shadow-[0_8px_24px_rgba(239,45,142,.28)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_10px_28px_rgba(239,45,142,.4)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[360px]:w-auto min-[360px]:px-2.5 md:gap-2 md:px-4 md:text-sm"
           >
@@ -54,7 +54,7 @@ export function Header() {
             href="https://wa.me/5513981197505"
             target="_blank"
             rel="noreferrer"
-            aria-label="WhatsApp da DOSKY"
+            aria-label="WhatsApp de Gustavo Freitas"
             title="WhatsApp"
             className="group inline-flex h-11 w-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-[#0dbf43] bg-[#0dbf43] p-0 text-[11px] font-semibold text-white shadow-[0_8px_24px_rgba(13,191,67,.25)] transition duration-300 hover:-translate-y-0.5 hover:border-[#0aa83a] hover:bg-[#0aa83a] hover:shadow-[0_10px_28px_rgba(13,191,67,.38)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[360px]:w-auto min-[360px]:px-2.5 md:gap-2 md:px-4 md:text-sm"
           >

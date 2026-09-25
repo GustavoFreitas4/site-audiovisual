@@ -16,9 +16,9 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://dosky-drone-sp.freitasdossantos128.chatgpt.site"),
-  title: "DOSKY Drone | Filmagens aéreas em São Paulo",
+  title: "Gustavo Videomaker",
   description:
-    "Filmagens com drone e captação terrestre para eventos, publicidade e imóveis na Baixada Santista e em todo o estado de São Paulo.",
+    "Gustavo Videomaker — filmagens com drone e captação terrestre para eventos, publicidade e imóveis na Baixada Santista e em todo o estado de São Paulo.",
   keywords: [
     "filmagem com drone Baixada Santista",
     "drone casamento Santos",
@@ -30,31 +30,46 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "DOSKY Drone | Filmagens aéreas em São Paulo",
+    title: "Gustavo Videomaker",
     description:
-      "Filmagens aéreas e terrestres para eventos, publicidade e imóveis em todo o estado de São Paulo.",
+      "Gustavo Videomaker — filmagens aéreas e terrestres para eventos, publicidade e imóveis em todo o estado de São Paulo.",
     url: "/",
-    siteName: "DOSKY Drone",
+    siteName: "Gustavo Videomaker",
     locale: "pt_BR",
     type: "website",
+    images: [
+      {
+        url: "/gustavo-freitas-logo.png",
+        width: 2170,
+        height: 725,
+        alt: "Gustavo Freitas",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gustavo Videomaker",
+    description:
+      "Gustavo Videomaker — filmagens aéreas e terrestres para eventos, publicidade e imóveis em todo o estado de São Paulo.",
+    images: ["/gustavo-freitas-logo.png"],
   },
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: "/dosky-logo.png",
-    shortcut: "/dosky-logo.png",
-    apple: "/dosky-logo.png",
+    icon: "/gustavo-freitas-logo.png",
+    shortcut: "/gustavo-freitas-logo.png",
+    apple: "/gustavo-freitas-logo.png",
   },
 };
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "DOSKY Drone",
+  name: "Gustavo Videomaker",
   url: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site",
-  logo: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/dosky-logo.png",
+  logo: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/gustavo-freitas-logo.png",
   image: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/hero-baixada.webp",
   telephone: "+55 13 98119-7505",
   slogan: "Vídeos que valorizam os momentos.",
@@ -64,7 +79,7 @@ const localBusinessSchema = {
     "@type": "State",
     name: "São Paulo",
   },
-  sameAs: ["https://www.instagram.com/doskydrone/"],
+  sameAs: ["https://www.instagram.com/gustavofmaker"],
   serviceType: [
     "Filmagem de eventos",
     "Filmagem publicitária",
