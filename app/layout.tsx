@@ -29,6 +29,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "Gustavo Videomaker",
     description:
@@ -39,28 +40,33 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/gustavo-freitas-logo.png",
-        width: 2170,
-        height: 725,
-        alt: "Gustavo Freitas",
+        url: "/images/favicon-gf.png",
+        width: 1254,
+        height: 1254,
+        alt: "Logo circular GF — Gustavo Videomaker",
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Gustavo Videomaker",
     description:
       "Gustavo Videomaker — filmagens aéreas e terrestres para eventos, publicidade e imóveis em todo o estado de São Paulo.",
-    images: ["/gustavo-freitas-logo.png"],
+    images: ["/images/favicon-gf.png"],
   },
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: "/gustavo-freitas-logo.png",
-    shortcut: "/gustavo-freitas-logo.png",
-    apple: "/gustavo-freitas-logo.png",
+    icon: [
+      { url: "/images/favicon-gf-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/images/favicon-gf-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-gf-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/images/favicon-gf-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/images/favicon-gf-32.png",
+    apple: [{ url: "/images/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
@@ -69,7 +75,7 @@ const localBusinessSchema = {
   "@type": "LocalBusiness",
   name: "Gustavo Videomaker",
   url: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site",
-  logo: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/gustavo-freitas-logo.png",
+  logo: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/images/favicon-gf.png",
   image: "https://dosky-drone-sp.freitasdossantos128.chatgpt.site/hero-baixada.webp",
   telephone: "+55 13 98119-7505",
   slogan: "Vídeos que valorizam os momentos.",
