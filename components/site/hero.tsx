@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { WHATSAPP_URL } from "@/lib/site-data";
+import { ArrowDown } from "lucide-react";
 
 export function Hero() {
   return (
@@ -32,23 +31,11 @@ export function Hero() {
 
           <div className="hero-enter hero-enter-3 mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="group inline-flex min-h-14 items-center gap-4 rounded-full bg-primary px-6 text-[.92rem] font-bold text-white shadow-[0_14px_40px_rgba(13,92,99,.3)] transition duration-300 hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-            >
-              Solicitar orçamento
-              <span className="grid size-8 place-items-center rounded-full bg-black/18 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                <ArrowUpRight aria-hidden="true" size={17} strokeWidth={2.25} />
-              </span>
-            </a>
-
-            <a
               href="#servicos"
-              className="group inline-flex min-h-12 items-center gap-3 px-2 text-sm font-semibold text-white/78 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-primary px-6 text-base font-bold text-white shadow-[0_14px_40px_rgba(13,92,99,.3)] transition duration-300 hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Conheça o nosso olhar
-              <ArrowDown aria-hidden="true" size={16} className="transition-transform duration-300 group-hover:translate-y-1" />
+              <ArrowDown aria-hidden="true" size={18} strokeWidth={2.25} className="transition-transform duration-300 group-hover:translate-y-1" />
             </a>
           </div>
         </div>
