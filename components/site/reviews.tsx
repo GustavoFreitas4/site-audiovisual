@@ -2,25 +2,25 @@ import { MoreHorizontal, Star } from "lucide-react";
 
 const REVIEWS = [
   {
-    name: "Marina A.",
-    time: "2 semanas atrás",
-    text: "Um trabalho cuidadoso do início ao fim. As imagens ficaram lindas e conseguiram registrar cada detalhe de um jeito muito especial.",
+    name: "Daniel Jhones",
+    time: "uma semana atrás",
+    text: "Experiência incrível! Equipe super profissional, atenciosa e criativa. As imagens de drone ficaram perfeitas, com ângulos que jamais imaginaríamos. Preço justo e entrega antes do prazo. Nota 1000!",
     rating: 5,
-    initials: "MA",
+    initials: "DJ",
   },
   {
-    name: "Ricardo M.",
-    time: "1 mês atrás",
-    text: "Atendimento excelente, muita atenção durante a produção e uma entrega acima das expectativas. Recomendo o trabalho.",
+    name: "Vinicius Lima",
+    time: "uma semana atrás",
+    text: "Atendimento incrível. Minha festa ficou ainda melhor com as gravações do profissional Gustavo. Super recomendo o trabalho e com toda certeza irei contratá-lo mais vezes.",
     rating: 5,
-    initials: "RM",
+    initials: "VL",
   },
   {
-    name: "Camila S.",
+    name: "Jordan Julio",
     time: "3 semanas atrás",
-    text: "O resultado ficou incrível. Profissionalismo, sensibilidade e imagens que realmente valorizam cada momento.",
+    text: "Profissionalismo resume essa empresa, impecáveis, pontuais, atenciosos e prestativos. Gustavo faz parecer pilotar um drone a coisa mais fácil do mundo pq ele faz isso com uma naturalidade que você acredita ser fácil, mas não é, ele é excelente no que faz, super recomendo, as imagens do meu aniversário ficaram perfeitas, uma empresa que indico sem pensar duas vezes.",
     rating: 5,
-    initials: "CS",
+    initials: "JJ",
   },
 ] as const;
 
