@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Film, Pause, Play, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, Film, Pause, Play, RotateCcw, RotateCw, Volume2, VolumeX, X } from "lucide-react";
 import type { GalleryVideo } from "@/lib/video-galleries";
 
 type VideoGalleryProps = {
@@ -27,6 +27,7 @@ type SpotlightBox = {
 };
 
 const SPOTLIGHT_DURATION = 300;
+const CONTROLS_HIDE_DELAY = 2000;
 
 function formatVideoTime(value: number) {
   if (!Number.isFinite(value) || value < 0) return "0:00";
@@ -43,6 +44,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const isVisibleRef = useRef(false);
   const isFocusedRef = useRef(false);
   const exitTimerRef = useRef<number | null>(null);
+  const controlsHideTimerRef = useRef<number | null>(null);
   const isClosingRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -51,7 +53,38 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [controlsVisible, setControlsVisible] = useState(true);
   const [spotlightBox, setSpotlightBox] = useState<SpotlightBox | null>(null);
+  const hasSource = Boolean(video.src?.trim());
+
+  const clearControlsHideTimer = () => {
+    if (controlsHideTimerRef.current !== null) {
+      window.clearTimeout(controlsHideTimerRef.current);
+      controlsHideTimerRef.current = null;
+    }
+  };
+
+  const scheduleControlsHide = () => {
+    clearControlsHideTimer();
+    if (!isFocused) return;
+
+    controlsHideTimerRef.current = window.setTimeout(() => {
+      setControlsVisible(false);
+      controlsHideTimerRef.current = null;
+    }, CONTROLS_HIDE_DELAY);
+  };
+
+  const revealControls = () => {
+    if (!isFocused) return;
+    setControlsVisible(true);
+    scheduleControlsHide();
+  };
+
+  const holdControlsVisible = () => {
+    if (!isFocused) return;
+    setControlsVisible(true);
+    clearControlsHideTimer();
+  };
 
   const resetAudio = () => {
     const media = videoRef.current;
@@ -85,6 +118,20 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
 
   useEffect(() => {
     isFocusedRef.current = isFocused;
+  }, [isFocused]);
+
+  useEffect(() => {
+    clearControlsHideTimer();
+    setControlsVisible(true);
+
+    if (!isFocused) return;
+
+    controlsHideTimerRef.current = window.setTimeout(() => {
+      setControlsVisible(false);
+      controlsHideTimerRef.current = null;
+    }, CONTROLS_HIDE_DELAY);
+
+    return clearControlsHideTimer;
   }, [isFocused]);
 
   useEffect(() => {
@@ -171,6 +218,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   useEffect(
     () => () => {
       if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
+      if (controlsHideTimerRef.current !== null) window.clearTimeout(controlsHideTimerRef.current);
     },
     [],
   );
@@ -188,9 +236,10 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
 
   const openSpotlight = () => {
     const tile = tileRef.current;
-    if (!tile || isFocused || isClosingRef.current) return;
+    if (!tile || !hasSource || hasError || isFocused || isClosingRef.current) return;
 
     resetAudio();
+    setShouldLoad(true);
     isClosingRef.current = false;
     const rect = tile.getBoundingClientRect();
     setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
@@ -231,6 +280,21 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     setCurrentTime(value);
   };
 
+  const skipVideo = (seconds: number) => {
+    const media = videoRef.current;
+    if (!media || hasError) return;
+
+    const mediaDuration = Number.isFinite(media.duration) && media.duration > 0 ? media.duration : duration;
+    const upperLimit = mediaDuration > 0 ? mediaDuration : Number.POSITIVE_INFINITY;
+    const nextTime = Math.min(Math.max(media.currentTime + seconds, 0), upperLimit);
+    media.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  };
+
+  const controlsVisibilityClass = controlsVisible
+    ? "visible opacity-100"
+    : "pointer-events-none invisible opacity-0";
+
   return (
     <article
       ref={tileRef}
@@ -238,6 +302,8 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       className={`relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-[90]" : "z-0"} ${isDimmed ? "pointer-events-none opacity-35" : "opacity-100"}`}
     >
       <div
+        onPointerMove={revealControls}
+        onPointerDownCapture={revealControls}
         className={`${isFocused && spotlightBox ? "fixed z-[100]" : "absolute inset-0"} overflow-hidden bg-[#111113] shadow-none transition-[left,top,width,height,box-shadow] duration-300 ease-out ${isFocused ? "shadow-[0_30px_90px_rgba(0,0,0,.78)]" : ""}`}
         style={
           isFocused && spotlightBox
@@ -256,54 +322,56 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               <Film aria-hidden="true" size={20} strokeWidth={1.5} />
             </span>
             <span className="text-xs font-semibold uppercase tracking-[.16em]">
-              {hasError ? "Vídeo em breve" : video.label}
+              {!hasSource || hasError ? "Vídeo em breve" : video.label}
             </span>
           </div>
         </div>
 
-        <video
-          ref={videoRef}
-          className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${isReady && !hasError ? "opacity-100" : "opacity-0"}`}
-          src={shouldLoad ? video.src : undefined}
-          poster={video.thumbnail}
-          preload="metadata"
-          autoPlay
-          muted={!isAudioActive}
-          loop
-          playsInline
-          aria-hidden="true"
-          tabIndex={-1}
-          onLoadedMetadata={(event) => {
-            const media = event.currentTarget;
-            setDuration(Number.isFinite(media.duration) ? media.duration : 0);
-            setCurrentTime(media.currentTime);
-          }}
-          onLoadedData={() => {
-            setIsReady(true);
-            if (isVisibleRef.current) {
-              videoRef.current?.play().catch(() => {
-                // O vídeo continua mudo e pronto para a próxima tentativa automática.
-              });
-            }
-          }}
-          onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
-          onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onError={() => {
-            resetAudio();
-            setHasError(true);
-            setIsReady(false);
-          }}
-        />
+        {hasSource ? (
+          <video
+            ref={videoRef}
+            className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${isReady && !hasError ? "opacity-100" : "opacity-0"}`}
+            src={shouldLoad ? video.src : undefined}
+            poster={video.thumbnail}
+            preload="metadata"
+            autoPlay
+            muted={!isAudioActive}
+            loop
+            playsInline
+            aria-hidden="true"
+            tabIndex={-1}
+            onLoadedMetadata={(event) => {
+              const media = event.currentTarget;
+              setDuration(Number.isFinite(media.duration) ? media.duration : 0);
+              setCurrentTime(media.currentTime);
+            }}
+            onLoadedData={() => {
+              setIsReady(true);
+              if (isVisibleRef.current || isFocusedRef.current) {
+                videoRef.current?.play().catch(() => {
+                  // O vídeo continua mudo e pronto para a próxima tentativa automática.
+                });
+              }
+            }}
+            onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+            onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onError={() => {
+              resetAudio();
+              setHasError(true);
+              setIsReady(false);
+            }}
+          />
+        ) : null}
 
         <button
           type="button"
           aria-label={`Destacar ${video.label}`}
-          disabled={isFocused}
+          disabled={isFocused || !hasSource || hasError}
           tabIndex={isFocused ? -1 : 0}
           onClick={openSpotlight}
-          className={`absolute inset-0 z-[1] bg-transparent ${isFocused ? "cursor-default" : "cursor-pointer"}`}
+          className={`absolute inset-0 z-[1] bg-transparent ${isFocused || !hasSource || hasError ? "cursor-default" : "cursor-pointer"}`}
         />
 
         <span className="pointer-events-none absolute left-3 top-3 z-[2] grid size-7 place-items-center rounded-full bg-black/55 text-[.65rem] font-semibold text-white/70 backdrop-blur-sm">
@@ -325,30 +393,76 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
         ) : null}
 
         {isFocused && isReady && !hasError ? (
-          <button
-            type="button"
-            aria-label={isPlaying ? `Pausar ${video.label}` : `Reproduzir ${video.label}`}
-            aria-pressed={!isPlaying}
-            onClick={(event) => {
-              event.stopPropagation();
-              togglePlayback();
-            }}
-            className="absolute left-1/2 top-1/2 z-10 grid size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white shadow-[0_10px_34px_rgba(0,0,0,.4)] backdrop-blur-md transition duration-200 hover:scale-105 hover:border-primary-readable/70 hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:size-16"
+          <div
+            className={`absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 transition-opacity duration-300 sm:gap-4 ${controlsVisibilityClass}`}
           >
-            {isPlaying ? <Pause aria-hidden="true" size={26} fill="currentColor" /> : <Play aria-hidden="true" size={27} fill="currentColor" className="translate-x-0.5" />}
-          </button>
+            <button
+              type="button"
+              aria-label={`Retroceder 10 segundos em ${video.label}`}
+              onPointerDown={holdControlsVisible}
+              onPointerUp={scheduleControlsHide}
+              onFocus={holdControlsVisible}
+              onBlur={scheduleControlsHide}
+              onClick={(event) => {
+                event.stopPropagation();
+                skipVideo(-10);
+              }}
+              className="relative grid size-11 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white shadow-[0_10px_34px_rgba(0,0,0,.4)] backdrop-blur-md transition duration-200 hover:scale-105 hover:border-primary-readable/70 hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:size-12"
+            >
+              <RotateCcw aria-hidden="true" size={27} strokeWidth={1.8} />
+              <span aria-hidden="true" className="absolute mt-0.5 text-[.55rem] font-bold tabular-nums">10</span>
+            </button>
+
+            <button
+              type="button"
+              aria-label={isPlaying ? `Pausar ${video.label}` : `Reproduzir ${video.label}`}
+              aria-pressed={!isPlaying}
+              onPointerDown={holdControlsVisible}
+              onPointerUp={scheduleControlsHide}
+              onFocus={holdControlsVisible}
+              onBlur={scheduleControlsHide}
+              onClick={(event) => {
+                event.stopPropagation();
+                togglePlayback();
+              }}
+              className="grid size-14 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white shadow-[0_10px_34px_rgba(0,0,0,.4)] backdrop-blur-md transition duration-200 hover:scale-105 hover:border-primary-readable/70 hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:size-16"
+            >
+              {isPlaying ? <Pause aria-hidden="true" size={26} fill="currentColor" /> : <Play aria-hidden="true" size={27} fill="currentColor" className="translate-x-0.5" />}
+            </button>
+
+            <button
+              type="button"
+              aria-label={`Avançar 10 segundos em ${video.label}`}
+              onPointerDown={holdControlsVisible}
+              onPointerUp={scheduleControlsHide}
+              onFocus={holdControlsVisible}
+              onBlur={scheduleControlsHide}
+              onClick={(event) => {
+                event.stopPropagation();
+                skipVideo(10);
+              }}
+              className="relative grid size-11 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white shadow-[0_10px_34px_rgba(0,0,0,.4)] backdrop-blur-md transition duration-200 hover:scale-105 hover:border-primary-readable/70 hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:size-12"
+            >
+              <RotateCw aria-hidden="true" size={27} strokeWidth={1.8} />
+              <span aria-hidden="true" className="absolute mt-0.5 text-[.55rem] font-bold tabular-nums">10</span>
+            </button>
+          </div>
         ) : null}
 
-        {isFocused ? (
+        {isFocused && isReady && !hasError ? (
           <button
             type="button"
             aria-label={isAudioActive ? `Desativar som de ${video.label}` : `Ativar som de ${video.label}`}
             aria-pressed={isAudioActive}
+            onPointerDown={holdControlsVisible}
+            onPointerUp={scheduleControlsHide}
+            onFocus={holdControlsVisible}
+            onBlur={scheduleControlsHide}
             onClick={(event) => {
               event.stopPropagation();
               handleSoundClick();
             }}
-            className={`absolute bottom-20 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-primary/50 bg-black/60 text-primary-readable shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-primary-readable/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
+            className={`absolute bottom-20 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-primary/50 bg-black/60 text-primary-readable shadow-lg backdrop-blur-md transition-[width,background-color,border-color,opacity] duration-300 hover:border-primary-readable/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"} ${controlsVisibilityClass}`}
           >
             <span className="relative grid size-6 shrink-0 place-items-center">
               <VolumeX
@@ -371,7 +485,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
         ) : null}
 
         {isFocused && isReady && !hasError ? (
-          <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pb-3 pt-8 sm:px-4">
+          <div className={`absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pb-3 pt-8 transition-opacity duration-300 sm:px-4 ${controlsVisibilityClass}`}>
             <input
               type="range"
               min="0"
@@ -381,6 +495,11 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               aria-label={`Progresso de ${video.label}`}
               aria-valuetext={`${formatVideoTime(currentTime)} de ${formatVideoTime(duration)}`}
               onClick={(event) => event.stopPropagation()}
+              onPointerDown={holdControlsVisible}
+              onPointerUp={scheduleControlsHide}
+              onPointerCancel={scheduleControlsHide}
+              onFocus={holdControlsVisible}
+              onBlur={scheduleControlsHide}
               onChange={(event) => seekVideo(Number(event.currentTarget.value))}
               className="video-seek-bar block w-full"
               style={{ background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${progress}%, rgba(255,255,255,.2) ${progress}%, rgba(255,255,255,.2) 100%)` }}
