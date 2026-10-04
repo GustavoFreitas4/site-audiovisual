@@ -48,12 +48,15 @@ function MapPin({ x, y, primary, name }: (typeof COVERAGE_POINTS)[number]) {
 
 export function ServiceArea() {
   return (
-    <div aria-labelledby="service-area-title" className="mt-20 text-white sm:mt-28">
+    <div
+      aria-labelledby="service-area-title"
+      className="mt-20 grid items-center gap-8 text-white sm:mt-28 sm:gap-10 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-12 xl:gap-16"
+    >
         <h2 id="service-area-title" className="max-w-[18ch] text-balance text-[clamp(2.15rem,7vw,5rem)] font-normal leading-[1.04] tracking-[-.045em] text-white/52">
           Atendemos toda <strong className="font-semibold text-white">BAIXADA SANTISTA</strong> e estado de <strong className="font-semibold text-white">SÃO PAULO</strong>
         </h2>
 
-        <div className="mx-auto mt-7 w-full sm:mt-10 sm:w-[88%] lg:w-[86%]">
+        <div className="mx-auto w-full max-w-[540px] lg:justify-self-end">
           <svg
             viewBox="0 0 900 520"
             preserveAspectRatio="xMidYMid meet"
