@@ -135,7 +135,7 @@ body {
   transform: scaleX(1);
 }
 
-.service-row > :not(.service-video):not(.service-video-overlay):not(.service-cursor) {
+.service-row > :not(.service-video):not(.service-video-overlay) {
   position: relative;
   z-index: 2;
 }
@@ -151,11 +151,6 @@ body {
   background: linear-gradient(90deg, rgba(3, 3, 4, .9) 0%, rgba(3, 3, 4, .64) 54%, rgba(3, 3, 4, .48) 100%);
   opacity: 0;
   transition: opacity .3s ease;
-}
-
-.service-cursor {
-  z-index: 20;
-  display: none;
 }
 
 .services-view-enter {
@@ -177,9 +172,6 @@ body {
     opacity: 1;
   }
 
-  .service-cursor {
-    display: flex;
-  }
 }
 
 .whatsapp-float::before {
@@ -240,8 +232,7 @@ body {
 
   .service-row::after,
   .service-video,
-  .service-video-overlay,
-  .service-cursor {
+  .service-video-overlay {
     transition: none;
   }
 }

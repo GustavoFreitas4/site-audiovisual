@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { ArrowDown, ArrowUpRight, MousePointerClick, Play } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowUpRight, MousePointerClick } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galleries";
 import { VideoGallery } from "./video-gallery";
@@ -24,12 +24,6 @@ type ServiceGalleryId = keyof typeof SERVICE_GALLERIES;
 
 const SERVICE_GALLERY_IDS = ["eventos", "marcas", "imoveis"] as const satisfies readonly ServiceGalleryId[];
 
-type CursorPosition = {
-  x: number;
-  y: number;
-  visible: boolean;
-};
-
 function hasFinePointer() {
   return typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === true;
 }
@@ -46,15 +40,12 @@ function ServiceCard({
   galleryId?: string;
 }) {
   const Icon = service.icon;
-  const cardRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoState, setVideoState] = useState<"idle" | "ready" | "error">("idle");
-  const [cursor, setCursor] = useState<CursorPosition>({ x: 0, y: 0, visible: false });
 
   const handleMouseEnter = () => {
     if (videoState === "error" || !hasFinePointer()) return;
 
-    setCursor((current) => ({ ...current, visible: true }));
     const video = videoRef.current;
     if (!video) return;
 
@@ -65,21 +56,7 @@ function ServiceCard({
     });
   };
 
-  const handleMouseMove = (event: MouseEvent<HTMLElement>) => {
-    if (videoState === "error" || !hasFinePointer()) return;
-
-    const card = cardRef.current;
-    if (!card) return;
-    const bounds = card.getBoundingClientRect();
-    setCursor({
-      x: event.clientX - bounds.left,
-      y: event.clientY - bounds.top,
-      visible: true,
-    });
-  };
-
   const handleMouseLeave = () => {
-    setCursor((current) => ({ ...current, visible: false }));
     const video = videoRef.current;
     if (!video) return;
 
@@ -89,7 +66,6 @@ function ServiceCard({
 
   return (
     <article
-      ref={cardRef}
       data-video={service.video}
       data-service-gallery={galleryId}
       role={onOpen ? "button" : undefined}
@@ -103,7 +79,6 @@ function ServiceCard({
         onOpen();
       }}
       onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       <video
@@ -117,10 +92,7 @@ function ServiceCard({
         aria-hidden="true"
         tabIndex={-1}
         onLoadedData={() => setVideoState("ready")}
-        onError={() => {
-          setVideoState("error");
-          setCursor((current) => ({ ...current, visible: false }));
-        }}
+        onError={() => setVideoState("error")}
       />
       <div aria-hidden="true" className="service-video-overlay pointer-events-none absolute inset-0" />
 
@@ -149,14 +121,6 @@ function ServiceCard({
         <Icon aria-hidden="true" size={23} strokeWidth={1.6} />
       </div>
 
-      <div
-        aria-hidden="true"
-        className={`service-cursor pointer-events-none absolute z-20 size-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-primary text-white shadow-[0_10px_30px_rgba(13,92,99,.4)] transition duration-200 ${cursor.visible ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}
-        style={{ left: cursor.x, top: cursor.y }}
-      >
-        <Play size={13} fill="currentColor" strokeWidth={1.5} />
-        <span className="mt-0.5 text-[.55rem] font-bold uppercase tracking-[.12em]">Assistir</span>
-      </div>
     </article>
   );
 }
