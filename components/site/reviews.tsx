@@ -24,8 +24,7 @@ const REVIEWS = [
   },
 ] as const;
 
-// Substitua pelo link real do perfil da empresa no Google quando ele estiver disponível.
-const GOOGLE_BUSINESS_URL = "#";
+const GOOGLE_BUSINESS_URL = "https://share.google/tCj6ev2uhCmjiiyxj";
 
 function GoogleMark({ className = "size-5" }: { className?: string }) {
   return (
@@ -75,6 +74,8 @@ export function Reviews() {
 
         <a
           href={GOOGLE_BUSINESS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="group inline-flex min-h-12 items-center gap-3 rounded-full border border-white/18 bg-white/[.035] px-5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-primary-readable/65 hover:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable"
           aria-label="Ver avaliações no Google"
         >
