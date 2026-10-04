@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Film, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, Film, Pause, Play, Volume2, VolumeX, X } from "lucide-react";
 import type { GalleryVideo } from "@/lib/video-galleries";
 
 type VideoGalleryProps = {
@@ -28,6 +28,15 @@ type SpotlightBox = {
 
 const SPOTLIGHT_DURATION = 300;
 
+function formatVideoTime(value: number) {
+  if (!Number.isFinite(value) || value < 0) return "0:00";
+
+  const totalSeconds = Math.floor(value);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
 function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }: GalleryVideoTileProps) {
   const tileRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -39,6 +48,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const [isReady, setIsReady] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [spotlightBox, setSpotlightBox] = useState<SpotlightBox | null>(null);
 
   const resetAudio = () => {
@@ -51,6 +63,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     if (!isFocused || isClosingRef.current) return;
 
     resetAudio();
+    videoRef.current?.play().catch(() => {
+      // O vídeo volta ao comportamento automático do grid quando o destaque fecha.
+    });
     isClosingRef.current = true;
 
     const tile = tileRef.current;
@@ -179,6 +194,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     isClosingRef.current = false;
     const rect = tile.getBoundingClientRect();
     setSpotlightBox({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+    videoRef.current?.play().catch(() => {
+      // Mantém o destaque aberto mesmo se o navegador bloquear a reprodução automática.
+    });
     onFocus();
   };
 
@@ -190,6 +208,28 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   };
 
   const showSoundLabel = !isAudioActive;
+  const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
+
+  const togglePlayback = () => {
+    const media = videoRef.current;
+    if (!media || hasError) return;
+
+    if (media.paused) {
+      media.play().catch(() => {
+        // O estado permanece pausado quando o navegador rejeita a reprodução.
+      });
+    } else {
+      media.pause();
+    }
+  };
+
+  const seekVideo = (value: number) => {
+    const media = videoRef.current;
+    if (!media || !Number.isFinite(value)) return;
+
+    media.currentTime = value;
+    setCurrentTime(value);
+  };
 
   return (
     <article
@@ -233,6 +273,11 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           playsInline
           aria-hidden="true"
           tabIndex={-1}
+          onLoadedMetadata={(event) => {
+            const media = event.currentTarget;
+            setDuration(Number.isFinite(media.duration) ? media.duration : 0);
+            setCurrentTime(media.currentTime);
+          }}
           onLoadedData={() => {
             setIsReady(true);
             if (isVisibleRef.current) {
@@ -241,6 +286,10 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               });
             }
           }}
+          onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+          onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
           onError={() => {
             resetAudio();
             setHasError(true);
@@ -275,6 +324,21 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           </button>
         ) : null}
 
+        {isFocused && isReady && !hasError ? (
+          <button
+            type="button"
+            aria-label={isPlaying ? `Pausar ${video.label}` : `Reproduzir ${video.label}`}
+            aria-pressed={!isPlaying}
+            onClick={(event) => {
+              event.stopPropagation();
+              togglePlayback();
+            }}
+            className="absolute left-1/2 top-1/2 z-10 grid size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-white/20 bg-black/60 text-white shadow-[0_10px_34px_rgba(0,0,0,.4)] backdrop-blur-md transition duration-200 hover:scale-105 hover:border-primary-readable/70 hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:size-16"
+          >
+            {isPlaying ? <Pause aria-hidden="true" size={26} fill="currentColor" /> : <Play aria-hidden="true" size={27} fill="currentColor" className="translate-x-0.5" />}
+          </button>
+        ) : null}
+
         {isFocused ? (
           <button
             type="button"
@@ -284,7 +348,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               event.stopPropagation();
               handleSoundClick();
             }}
-            className={`absolute bottom-3 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-primary/50 bg-black/60 text-primary-readable shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-primary-readable/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
+            className={`absolute bottom-20 right-3 z-10 flex h-11 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-primary/50 bg-black/60 text-primary-readable shadow-lg backdrop-blur-md transition-[width,background-color,border-color] duration-300 hover:border-primary-readable/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable ${showSoundLabel ? "w-36 gap-2 px-3" : "w-11 px-2.5"}`}
           >
             <span className="relative grid size-6 shrink-0 place-items-center">
               <VolumeX
@@ -304,6 +368,27 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               Ativar som
             </span>
           </button>
+        ) : null}
+
+        {isFocused && isReady && !hasError ? (
+          <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pb-3 pt-8 sm:px-4">
+            <input
+              type="range"
+              min="0"
+              max={duration || 0}
+              step="0.01"
+              value={duration > 0 ? Math.min(currentTime, duration) : 0}
+              aria-label={`Progresso de ${video.label}`}
+              aria-valuetext={`${formatVideoTime(currentTime)} de ${formatVideoTime(duration)}`}
+              onClick={(event) => event.stopPropagation()}
+              onChange={(event) => seekVideo(Number(event.currentTarget.value))}
+              className="video-seek-bar block w-full"
+              style={{ background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${progress}%, rgba(255,255,255,.2) ${progress}%, rgba(255,255,255,.2) 100%)` }}
+            />
+            <div className="mt-2 text-right text-[.68rem] font-medium tabular-nums text-white/75 sm:text-xs">
+              {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
+            </div>
+          </div>
         ) : null}
       </div>
     </article>
