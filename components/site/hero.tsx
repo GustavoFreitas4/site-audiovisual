@@ -205,21 +205,23 @@ export function Hero() {
                 const isPrimary = index === 0;
 
                 return (
-                  <figure
+                  <div
                     key={card.image}
-                    className={`hero-showcase-card hero-showcase-card--${index + 1} relative overflow-hidden rounded-[20px] ${
+                    className={`card-ambient-glow hero-showcase-card-wrap hero-showcase-card-wrap--${index + 1} ${
                       isPrimary ? "col-span-2 aspect-[1.95/1]" : "aspect-[1.12/1]"
                     }`}
                   >
-                    <Image
-                      src={card.image}
-                      alt={card.imageAlt}
-                      fill
-                      sizes={isPrimary ? "500px" : "245px"}
-                      className="object-cover"
-                      style={{ objectPosition: card.imagePosition }}
-                    />
-                  </figure>
+                    <figure className="hero-showcase-card relative z-[1] h-full w-full overflow-hidden rounded-[20px]">
+                      <Image
+                        src={card.image}
+                        alt={card.imageAlt}
+                        fill
+                        sizes={isPrimary ? "500px" : "245px"}
+                        className="object-cover"
+                        style={{ objectPosition: card.imagePosition }}
+                      />
+                    </figure>
+                  </div>
                 );
               })}
             </div>

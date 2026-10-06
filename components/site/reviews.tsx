@@ -86,31 +86,30 @@ export function Reviews() {
 
       <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-5">
         {REVIEWS.map((review) => (
-          <article
-            key={review.name}
-            className="group flex min-h-64 flex-col rounded-2xl border border-white/10 bg-white/[.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:bg-primary/[.07] hover:shadow-[0_18px_50px_rgba(13,92,99,.13)] sm:p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <div aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-full border border-primary/45 bg-primary/20 text-xs font-bold tracking-[.08em] text-primary-readable">
-                  {review.initials}
+          <div key={review.name} className="card-ambient-glow review-card-glow h-full">
+            <article className="group relative z-[1] flex h-full min-h-64 flex-col rounded-2xl border border-white/10 bg-white/[.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:bg-primary/[.07] hover:shadow-[0_18px_50px_rgba(13,92,99,.13)] sm:p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-full border border-primary/45 bg-primary/20 text-xs font-bold tracking-[.08em] text-primary-readable">
+                    {review.initials}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-sm font-semibold text-white sm:text-base">{review.name}</h3>
+                    <p className="mt-0.5 text-xs text-white/38">{review.time}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h3 className="truncate text-sm font-semibold text-white sm:text-base">{review.name}</h3>
-                  <p className="mt-0.5 text-xs text-white/38">{review.time}</p>
-                </div>
+                <GoogleMark className="size-5 shrink-0 opacity-90" />
               </div>
-              <GoogleMark className="size-5 shrink-0 opacity-90" />
-            </div>
 
-            <div className="mt-5">
-              <RatingStars rating={review.rating} className="size-4" />
-            </div>
+              <div className="mt-5">
+                <RatingStars rating={review.rating} className="size-4" />
+              </div>
 
-            <p className="mt-4 text-sm leading-6 text-white/62">{review.text}</p>
+              <p className="mt-4 text-sm leading-6 text-white/62">{review.text}</p>
 
-            <MoreHorizontal aria-hidden="true" className="mt-auto self-end pt-5 text-white/28 transition-colors group-hover:text-primary-readable" size={21} />
-          </article>
+              <MoreHorizontal aria-hidden="true" className="mt-auto self-end pt-5 text-white/28 transition-colors group-hover:text-primary-readable" size={21} />
+            </article>
+          </div>
         ))}
       </div>
     </section>
