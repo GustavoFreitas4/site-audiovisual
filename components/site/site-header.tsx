@@ -3,8 +3,16 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+const NAV_ITEMS = [
+  { id: "inicio", label: "Início" },
+  { id: "servicos", label: "Serviços" },
+  { id: "atendimento", label: "Atendimento" },
+  { id: "avaliacoes", label: "Avaliações" },
+] as const;
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<(typeof NAV_ITEMS)[number]["id"]>("inicio");
 
   useEffect(() => {
     const updateHeader = () => setIsScrolled(window.scrollY > 20);
@@ -12,6 +20,34 @@ export function Header() {
     updateHeader();
     window.addEventListener("scroll", updateHeader, { passive: true });
     return () => window.removeEventListener("scroll", updateHeader);
+  }, []);
+
+  useEffect(() => {
+    const visibleSections = new Set<string>();
+    const sections = NAV_ITEMS.map(({ id }) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section));
+
+    const updateActiveSection = () => {
+      const focusLine = window.innerHeight * 0.36;
+      const visible = sections
+        .filter((section) => visibleSections.has(section.id))
+        .sort((first, second) => Math.abs(first.getBoundingClientRect().top - focusLine) - Math.abs(second.getBoundingClientRect().top - focusLine));
+
+      if (visible[0]) setActiveSection(visible[0].id as (typeof NAV_ITEMS)[number]["id"]);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visibleSections.add(entry.target.id);
+          else visibleSections.delete(entry.target.id);
+        });
+        updateActiveSection();
+      },
+      { rootMargin: "-24% 0px -58% 0px", threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -22,7 +58,7 @@ export function Header() {
           : "border-transparent bg-black/20 shadow-none backdrop-blur-[3px]"
       }`}
     >
-      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-14 xl:px-20">
+      <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 min-[900px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-14 xl:px-20">
         <a href="#inicio" aria-label="Gustavo Freitas — início" className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
           <span className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0">
             <Image
@@ -37,7 +73,26 @@ export function Header() {
           </span>
         </a>
 
-        <div className="col-start-2 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <nav aria-label="Navegação principal" className="col-start-2 hidden items-center gap-6 min-[900px]:flex xl:gap-8">
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeSection === item.id;
+
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                aria-current={isActive ? "location" : undefined}
+                className={`relative py-2 text-xs font-semibold tracking-[.02em] transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-center after:bg-primary-readable after:transition-transform after:duration-300 ${
+                  isActive ? "text-primary-readable after:scale-x-100" : "text-white/62 after:scale-x-0 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        <div className="col-start-2 ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 min-[900px]:col-start-3">
           <a
             href="https://www.instagram.com/gustavofmaker"
             target="_blank"

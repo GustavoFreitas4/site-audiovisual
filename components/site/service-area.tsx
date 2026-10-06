@@ -49,6 +49,7 @@ function MapPin({ x, y, primary, name }: (typeof COVERAGE_POINTS)[number]) {
 export function ServiceArea() {
   return (
     <div
+      id="atendimento"
       aria-labelledby="service-area-title"
       className="mt-20 grid items-center gap-8 text-white sm:mt-28 sm:gap-10 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-12 xl:gap-16"
     >

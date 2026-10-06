@@ -4,38 +4,49 @@ import Image from "next/image";
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const ROTATING_WORDS = ["momentos.", "negócios.", "histórias."] as const;
+const ROTATING_WORDS = ["momentos.", "histórias.", "negócios."] as const;
+
+function RotatingHeroWord() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isWordVisible, setIsWordVisible] = useState(true);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let swapTimer: number | undefined;
+
+    const rotationTimer = window.setInterval(() => {
+      if (reducedMotion.matches) {
+        setWordIndex((current) => (current + 1) % ROTATING_WORDS.length);
+        return;
+      }
+
+      setIsWordVisible(false);
+      swapTimer = window.setTimeout(() => {
+        setWordIndex((current) => (current + 1) % ROTATING_WORDS.length);
+        setIsWordVisible(true);
+      }, 320);
+    }, 2000);
+
+    return () => {
+      window.clearInterval(rotationTimer);
+      if (swapTimer !== undefined) window.clearTimeout(swapTimer);
+    };
+  }, []);
+
+  return (
+    <span
+      aria-hidden="true"
+      className={`hero-rotating-word block font-serif font-normal italic tracking-[-.045em] text-white/92 ${isWordVisible ? "is-visible" : ""}`}
+    >
+      {ROTATING_WORDS[wordIndex]}
+    </span>
+  );
+}
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [wordIndex, setWordIndex] = useState(0);
-  const [isWordVisible, setIsWordVisible] = useState(false);
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reducedMotion.matches) {
-      setIsWordVisible(true);
-      return;
-    }
-
-    let swapTimer: number | undefined;
-    const initialTimer = window.setTimeout(() => setIsWordVisible(true), 620);
-    const rotationTimer = window.setInterval(() => {
-      setIsWordVisible(false);
-      swapTimer = window.setTimeout(() => {
-        setWordIndex((current) => (current + 1) % ROTATING_WORDS.length);
-        setIsWordVisible(true);
-      }, 360);
-    }, 3200);
-
-    return () => {
-      window.clearTimeout(initialTimer);
-      window.clearInterval(rotationTimer);
-      if (swapTimer !== undefined) window.clearTimeout(swapTimer);
-    };
-  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -99,7 +110,7 @@ export function Hero() {
 
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 
-      <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-end px-5 pb-8 pt-32 sm:min-h-[840px] sm:px-8 sm:pb-10 lg:min-h-[900px] lg:px-14 lg:pb-12 xl:px-20">
+      <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-end px-5 pb-12 pt-32 sm:min-h-[840px] sm:px-8 sm:pb-12 lg:min-h-[900px] lg:px-14 lg:pb-14 xl:px-20">
         <div ref={contentRef} className="hero-parallax-content max-w-[760px] pb-14 sm:pb-16">
           <div className="hero-enter hero-enter-1 mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
             <span className="h-px w-9 bg-primary" />
@@ -107,16 +118,11 @@ export function Hero() {
           </div>
 
           <h1
-            aria-label="Vídeos que valorizam momentos, negócios e histórias."
+            aria-label="Vídeos que valorizam momentos, histórias e negócios."
             className="max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)]"
           >
-            <span className="hero-title-main block">Vídeos que valorizam os</span>
-            <span
-              aria-hidden="true"
-              className={`hero-rotating-word block font-serif font-normal italic tracking-[-.045em] text-white/92 ${isWordVisible ? "is-visible" : ""}`}
-            >
-              {ROTATING_WORDS[wordIndex]}
-            </span>
+            <span className="block">Vídeos que valorizam os</span>
+            <RotatingHeroWord />
           </h1>
 
           <div className="hero-enter hero-enter-3 mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -131,6 +137,19 @@ export function Hero() {
         </div>
 
       </div>
+
+      <a
+        href="#servicos"
+        aria-label="Rolar para explorar os serviços"
+        className="hero-scroll-indicator absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center text-white/68 transition-opacity duration-300 hover:text-white focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable sm:bottom-4"
+      >
+        <span aria-hidden="true" className="hero-scroll-mouse">
+          <span className="hero-scroll-wheel" />
+        </span>
+        <ArrowDown aria-hidden="true" size={14} strokeWidth={1.7} className="mt-1.5 text-primary-readable" />
+        <span className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-[.28em]">Role para explorar</span>
+        <span aria-hidden="true" className="mt-2 h-px w-9 bg-primary/75 shadow-[0_0_10px_rgba(13,92,99,.9)]" />
+      </a>
     </section>
   );
 }

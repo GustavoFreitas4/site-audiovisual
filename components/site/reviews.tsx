@@ -54,7 +54,7 @@ function RatingStars({ rating, className = "size-5" }: { rating: number; classNa
 
 export function Reviews() {
   return (
-    <section aria-labelledby="reviews-title" className="mt-20 sm:mt-28">
+    <section id="avaliacoes" aria-labelledby="reviews-title" className="mt-20 sm:mt-28">
       <header className="text-center">
         <p className="mb-3 text-[.7rem] font-semibold uppercase tracking-[.24em] text-primary-readable">Depoimentos</p>
         <h2 id="reviews-title" className="text-balance text-[clamp(2.2rem,6vw,4.4rem)] font-semibold leading-[.98] tracking-[-.05em]">
