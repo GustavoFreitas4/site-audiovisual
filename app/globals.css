@@ -194,6 +194,17 @@ body {
   will-change: transform;
 }
 
+.hero-showcase-card-wrap::before {
+  border-color: rgba(13, 92, 99, .96);
+  box-shadow:
+    0 0 14px rgba(13, 92, 99, .7),
+    0 0 38px rgba(13, 92, 99, .5),
+    0 0 84px rgba(13, 92, 99, .3),
+    0 0 120px rgba(13, 92, 99, .15);
+  filter: blur(1.75px);
+  opacity: .8;
+}
+
 .hero-showcase-card {
   isolation: isolate;
   border: 1px solid rgba(255, 255, 255, .17);
