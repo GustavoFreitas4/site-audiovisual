@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const ROTATING_WORDS = ["momentos.", "histórias.", "negócios."] as const;
+const ROTATING_WORDS = ["momentos.", "detalhes.", "espaços.", "negócios."] as const;
 
 function RotatingHeroWord() {
   const [wordIndex, setWordIndex] = useState(0);
@@ -111,29 +111,20 @@ export function Hero() {
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 
       <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-end px-5 pb-12 pt-32 sm:min-h-[840px] sm:px-8 sm:pb-12 lg:min-h-[900px] lg:px-14 lg:pb-14 xl:px-20">
-        <div ref={contentRef} className="hero-parallax-content max-w-[760px] pb-14 sm:pb-16">
+        <div ref={contentRef} className="hero-parallax-content max-w-[760px] pb-28 sm:pb-32">
           <div className="hero-enter hero-enter-1 mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
             <span className="h-px w-9 bg-primary" />
             Filmagens aéreas e terrestres
           </div>
 
           <h1
-            aria-label="Vídeos que valorizam momentos, histórias e negócios."
+            aria-label="Vídeos que valorizam momentos, detalhes, espaços e negócios."
             className="max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)]"
           >
             <span className="block">Vídeos que valorizam os</span>
             <RotatingHeroWord />
           </h1>
 
-          <div className="hero-enter hero-enter-3 mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <a
-              href="#servicos"
-              className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-primary px-6 text-base font-bold text-white shadow-[0_14px_40px_rgba(13,92,99,.3)] transition duration-300 hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-            >
-              Conheça o nosso olhar
-              <ArrowDown aria-hidden="true" size={18} strokeWidth={2.25} className="transition-transform duration-300 group-hover:translate-y-1" />
-            </a>
-          </div>
         </div>
 
       </div>
