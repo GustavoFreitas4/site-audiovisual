@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Aperture, ArrowDown, Camera, House, type LucideIcon } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const ROTATING_WORDS = ["momentos.", "detalhes.", "espaços.", "negócios."] as const;
@@ -10,40 +10,23 @@ type HeroCard = {
   image: string;
   imagePosition: string;
   imageAlt: string;
-  icon: LucideIcon;
-  title: string;
-  subtitle: string;
-  caption: readonly [string, string];
 };
 
-// Substitua apenas os caminhos abaixo pelas três fotos finais quando elas forem enviadas.
 const HERO_CARDS: readonly HeroCard[] = [
   {
-    image: "/hero-baixada.webp",
-    imagePosition: "center 46%",
-    imageAlt: "Vista aérea do litoral da Baixada Santista",
-    icon: Aperture,
-    title: "Imagens Aéreas",
-    subtitle: "Nova perspectiva",
-    caption: ["Paisagens que contam", "histórias"],
+    image: "/images/hero-cards/card-01.jpg",
+    imagePosition: "center center",
+    imageAlt: "Operador segurando o controle de um drone",
   },
   {
-    image: "/images/hero-drone.jpg?v=2",
-    imagePosition: "82% center",
-    imageAlt: "Produção audiovisual ao ar livre",
-    icon: Camera,
-    title: "Eventos",
-    subtitle: "Emoções reais",
-    caption: ["Momentos que ficam", "para sempre"],
+    image: "/images/hero-cards/card-02.jpg",
+    imagePosition: "56% 46%",
+    imageAlt: "Operador segurando um drone diante de uma escultura vermelha",
   },
   {
-    image: "/hero-baixada.webp",
-    imagePosition: "72% center",
-    imageAlt: "Arquitetura e paisagem urbana no litoral",
-    icon: House,
-    title: "Imóveis",
-    subtitle: "Espaços em destaque",
-    caption: ["Valorizando", "cada detalhe"],
+    image: "/images/hero-cards/card-03.jpg",
+    imagePosition: "center 42%",
+    imageAlt: "Profissional registrando um evento com câmera",
   },
 ] as const;
 
@@ -219,12 +202,11 @@ export function Hero() {
           <div aria-label="Destaques do portfólio" className="hero-showcase-scene hidden xl:block">
             <div ref={showcaseRef} className="hero-showcase-stage grid grid-cols-2 gap-x-6 gap-y-7">
               {HERO_CARDS.map((card, index) => {
-                const CardIcon = card.icon;
                 const isPrimary = index === 0;
 
                 return (
-                  <article
-                    key={card.title}
+                  <figure
+                    key={card.image}
                     className={`hero-showcase-card hero-showcase-card--${index + 1} relative overflow-hidden rounded-[20px] ${
                       isPrimary ? "col-span-2 aspect-[1.95/1]" : "aspect-[1.12/1]"
                     }`}
@@ -237,31 +219,7 @@ export function Hero() {
                       className="object-cover"
                       style={{ objectPosition: card.imagePosition }}
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,10,.66)_0%,rgba(4,8,10,.12)_42%,rgba(3,5,7,.84)_100%)]" />
-                    <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-white shadow-[0_0_18px_rgba(13,92,99,.3)] backdrop-blur-md">
-                          <CardIcon aria-hidden="true" size={18} strokeWidth={1.8} />
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block truncate text-[.76rem] font-semibold leading-tight text-white">{card.title}</span>
-                          <span className="mt-1 block truncate text-[.57rem] font-medium uppercase tracking-[.14em] text-white/55">
-                            {card.subtitle}
-                          </span>
-                        </span>
-                      </div>
-                      <span className="shrink-0 rounded-full border border-white/15 bg-black/35 px-2.5 py-1 text-[.65rem] font-semibold text-white/90 backdrop-blur-md">
-                        4K
-                      </span>
-                    </div>
-                    <div className="absolute bottom-0 right-0 flex items-start gap-3 p-4 text-[.62rem] font-semibold uppercase leading-[1.45] tracking-[.12em] text-white/88">
-                      <span aria-hidden="true" className="mt-[.48rem] h-px w-7 shrink-0 bg-primary-readable shadow-[0_0_8px_rgba(67,166,174,.65)]" />
-                      <span>
-                        <span className="block">{card.caption[0]}</span>
-                        <span className="block">{card.caption[1]}</span>
-                      </span>
-                    </div>
-                  </article>
+                  </figure>
                 );
               })}
             </div>
