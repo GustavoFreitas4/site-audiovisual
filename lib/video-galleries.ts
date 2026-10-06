@@ -19,7 +19,7 @@ export const EVENTOS_VIDEOS = [
 // Adicione ou substitua os MP4 em public/videos/marcas/ mantendo estes nomes.
 // Enquanto um arquivo não existir, a galeria exibe o placeholder "Vídeo em breve".
 export const MARCAS_VIDEOS = [
-  { id: "marca-01", label: "Marca 01" },
+  { id: "marca-01", src: "/videos/marcas/video-01.mp4", label: "Marca 01" },
   { id: "marca-02", label: "Marca 02" },
   { id: "marca-03", label: "Marca 03" },
   { id: "marca-04", label: "Marca 04" },
