@@ -235,7 +235,7 @@ export function Services() {
                   aria-label="Ir para os cards e explorar os serviços"
                 >
                   <MousePointerClick aria-hidden="true" size={19} className="text-primary-readable transition-transform duration-300 group-hover:scale-110" />
-                  Clique abaixo para explorar
+                  Entre e descubra
                   <ArrowDown aria-hidden="true" size={17} className="animate-bounce text-primary-readable" />
                 </button>
 

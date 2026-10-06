@@ -111,15 +111,15 @@ export function Hero() {
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 
       <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-end px-5 pb-12 pt-32 sm:min-h-[840px] sm:px-8 sm:pb-12 lg:min-h-[900px] lg:px-14 lg:pb-14 xl:px-20">
-        <div ref={contentRef} className="hero-parallax-content max-w-[760px] pb-28 sm:pb-32">
-          <div className="hero-enter hero-enter-1 mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
+        <div ref={contentRef} className="hero-parallax-content mx-auto flex w-full max-w-[760px] flex-col items-center pb-28 text-center sm:pb-32">
+          <div className="hero-enter hero-enter-1 mb-5 flex items-center justify-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
             <span className="h-px w-9 bg-primary" />
             Filmagens aéreas e terrestres
           </div>
 
           <h1
             aria-label="Vídeos que valorizam momentos, detalhes, espaços e negócios."
-            className="max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)]"
+            className="w-full max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)]"
           >
             <span className="block">Vídeos que valorizam os</span>
             <RotatingHeroWord />
