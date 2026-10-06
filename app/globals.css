@@ -87,6 +87,29 @@ body {
   animation: hero-scale 12s cubic-bezier(.2,.65,.2,1) both;
 }
 
+.hero-parallax-background,
+.hero-parallax-content {
+  transition: transform .22s cubic-bezier(.2, .75, .25, 1);
+  will-change: transform;
+}
+
+.hero-title-main {
+  animation: hero-rise .85s .16s cubic-bezier(.16,1,.3,1) both;
+}
+
+.hero-rotating-word {
+  opacity: 0;
+  filter: blur(7px);
+  transform: translateY(16px);
+  transition: opacity .36s ease, filter .36s ease, transform .36s cubic-bezier(.16,1,.3,1);
+}
+
+.hero-rotating-word.is-visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
 .hero-enter {
   animation: hero-rise .85s cubic-bezier(.16,1,.3,1) both;
 }
@@ -268,12 +291,25 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero-image,
+  .hero-title-main,
   .hero-enter,
   .site-header,
   .services-view-enter,
   .service-area-pin-pulse,
   .whatsapp-float::before {
     animation: none;
+  }
+
+  .hero-parallax-background,
+  .hero-parallax-content,
+  .hero-rotating-word {
+    transition: none;
+  }
+
+  .hero-rotating-word {
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 
   .service-row::after,
