@@ -223,7 +223,8 @@ export function Services() {
                   Serviços
                 </p>
                 <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
-                  Histórias vistas de um jeito <span className="font-serif font-normal italic text-white/58">único.</span>
+                  Do momento à imagem. Do comum ao{" "}
+                  <span className="font-serif font-normal italic text-primary">extraordinário.</span>
                 </h2>
               </div>
 
