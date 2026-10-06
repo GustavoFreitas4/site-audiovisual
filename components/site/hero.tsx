@@ -88,6 +88,7 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const showcaseRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -133,6 +134,50 @@ export function Hero() {
     };
   }, []);
 
+  useEffect(() => {
+    const showcase = showcaseRef.current;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (!showcase || !finePointer.matches || reducedMotion.matches) return;
+
+    let animationFrame = 0;
+    let rotateX = 0;
+    let rotateY = 0;
+
+    const renderTilt = () => {
+      showcase.style.setProperty("--hero-showcase-rotate-x", `${rotateX}deg`);
+      showcase.style.setProperty("--hero-showcase-rotate-y", `${rotateY}deg`);
+      animationFrame = 0;
+    };
+
+    const updateTilt = (event: PointerEvent) => {
+      const rect = showcase.getBoundingClientRect();
+      const pointerX = Math.max(-0.5, Math.min(0.5, (event.clientX - rect.left) / rect.width - 0.5));
+      const pointerY = Math.max(-0.5, Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5));
+      rotateX = pointerY * -4;
+      rotateY = pointerX * 5;
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(renderTilt);
+    };
+
+    const resetTilt = () => {
+      rotateX = 0;
+      rotateY = 0;
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(renderTilt);
+    };
+
+    showcase.addEventListener("pointermove", updateTilt, { passive: true });
+    showcase.addEventListener("pointerleave", resetTilt);
+
+    return () => {
+      showcase.removeEventListener("pointermove", updateTilt);
+      showcase.removeEventListener("pointerleave", resetTilt);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      showcase.style.removeProperty("--hero-showcase-rotate-x");
+      showcase.style.removeProperty("--hero-showcase-rotate-y");
+    };
+  }, []);
+
   return (
     <section ref={sectionRef} id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-black sm:min-h-[840px] lg:min-h-[900px]">
       <div ref={backgroundRef} className="hero-parallax-background absolute -inset-4">
@@ -171,8 +216,8 @@ export function Hero() {
             </h1>
           </div>
 
-          <div aria-label="Destaques do portfólio" className="hidden [perspective:1400px] xl:block">
-            <div className="grid grid-cols-2 gap-3">
+          <div aria-label="Destaques do portfólio" className="hero-showcase-scene hidden xl:block">
+            <div ref={showcaseRef} className="hero-showcase-stage grid grid-cols-2 gap-x-6 gap-y-7">
               {HERO_CARDS.map((card, index) => {
                 const CardIcon = card.icon;
                 const isPrimary = index === 0;
@@ -181,7 +226,7 @@ export function Hero() {
                   <article
                     key={card.title}
                     className={`hero-showcase-card hero-showcase-card--${index + 1} relative overflow-hidden rounded-[20px] ${
-                      isPrimary ? "col-span-2 aspect-[1.95/1]" : "-mt-5 aspect-[1.12/1]"
+                      isPrimary ? "col-span-2 aspect-[1.95/1]" : "aspect-[1.12/1]"
                     }`}
                   >
                     <Image

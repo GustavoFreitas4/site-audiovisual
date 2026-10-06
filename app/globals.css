@@ -152,27 +152,46 @@ body {
 .hero-enter-3 { animation-delay: .25s; }
 .hero-enter-4 { animation-delay: .34s; }
 
+.hero-showcase-scene {
+  perspective: 1000px;
+  perspective-origin: 62% 48%;
+  transform-style: preserve-3d;
+}
+
+.hero-showcase-stage {
+  --hero-showcase-rotate-x: 0deg;
+  --hero-showcase-rotate-y: 0deg;
+  transform: rotateX(var(--hero-showcase-rotate-x)) rotateY(var(--hero-showcase-rotate-y));
+  transform-style: preserve-3d;
+  transition: transform .24s cubic-bezier(.2, .75, .25, 1);
+  will-change: transform;
+}
+
 .hero-showcase-card {
   isolation: isolate;
   border: 1px solid rgba(255, 255, 255, .17);
   background: rgba(5, 8, 10, .72);
-  box-shadow: 0 22px 58px rgba(0, 0, 0, .48), 0 0 28px rgba(13, 92, 99, .1);
+  box-shadow: -24px 30px 74px rgba(0, 0, 0, .64), 18px 4px 42px rgba(13, 92, 99, .16), inset 0 1px 0 rgba(255, 255, 255, .08);
   transform-style: preserve-3d;
+  transform-origin: center center;
   will-change: transform;
 }
 
 .hero-showcase-card--1 {
   z-index: 3;
+  transform: perspective(1000px) rotateX(2deg) rotateY(-15deg) translate3d(8px, 0, 42px);
   animation: hero-card-float-1 7s ease-in-out infinite;
 }
 
 .hero-showcase-card--2 {
   z-index: 2;
+  transform: perspective(1000px) rotateX(-1.5deg) rotateY(-13deg) translate3d(12px, 0, 24px);
   animation: hero-card-float-2 7.8s ease-in-out -.8s infinite;
 }
 
 .hero-showcase-card--3 {
   z-index: 1;
+  transform: perspective(1000px) rotateX(-.5deg) rotateY(-17deg) translate3d(5px, 0, 14px);
   animation: hero-card-float-3 7.4s ease-in-out -1.7s infinite;
 }
 
@@ -332,18 +351,18 @@ body {
 }
 
 @keyframes hero-card-float-1 {
-  0%, 100% { transform: perspective(1400px) rotateX(1deg) rotateY(-3.5deg) translate3d(0, 0, 20px); }
-  50% { transform: perspective(1400px) rotateX(.2deg) rotateY(-2deg) translate3d(0, -5px, 26px); }
+  0%, 100% { transform: perspective(1000px) rotateX(2deg) rotateY(-15deg) translate3d(8px, 0, 42px); }
+  50% { transform: perspective(1000px) rotateX(1deg) rotateY(-13.5deg) translate3d(8px, -7px, 52px); }
 }
 
 @keyframes hero-card-float-2 {
-  0%, 100% { transform: perspective(1400px) rotateX(-1deg) rotateY(4deg) translate3d(4px, 0, 10px); }
-  50% { transform: perspective(1400px) rotateX(-.2deg) rotateY(2.5deg) translate3d(4px, -4px, 16px); }
+  0%, 100% { transform: perspective(1000px) rotateX(-1.5deg) rotateY(-13deg) translate3d(12px, 0, 24px); }
+  50% { transform: perspective(1000px) rotateX(-.5deg) rotateY(-15deg) translate3d(12px, -5px, 32px); }
 }
 
 @keyframes hero-card-float-3 {
-  0%, 100% { transform: perspective(1400px) rotateX(-.8deg) rotateY(-3deg) translate3d(-3px, 0, 7px); }
-  50% { transform: perspective(1400px) rotateX(0) rotateY(-1.8deg) translate3d(-3px, -6px, 13px); }
+  0%, 100% { transform: perspective(1000px) rotateX(-.5deg) rotateY(-17deg) translate3d(5px, 0, 14px); }
+  50% { transform: perspective(1000px) rotateX(.5deg) rotateY(-15deg) translate3d(5px, -8px, 23px); }
 }
 
 @keyframes header-enter {
@@ -391,6 +410,7 @@ body {
 
   .hero-parallax-background,
   .hero-parallax-content,
+  .hero-showcase-stage,
   .hero-rotating-word {
     transition: none;
   }
