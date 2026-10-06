@@ -1,10 +1,51 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowDown } from "lucide-react";
+import { Aperture, ArrowDown, Camera, House, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const ROTATING_WORDS = ["momentos.", "detalhes.", "espaços.", "negócios."] as const;
+
+type HeroCard = {
+  image: string;
+  imagePosition: string;
+  imageAlt: string;
+  icon: LucideIcon;
+  title: string;
+  subtitle: string;
+  caption: readonly [string, string];
+};
+
+// Substitua apenas os caminhos abaixo pelas três fotos finais quando elas forem enviadas.
+const HERO_CARDS: readonly HeroCard[] = [
+  {
+    image: "/hero-baixada.webp",
+    imagePosition: "center 46%",
+    imageAlt: "Vista aérea do litoral da Baixada Santista",
+    icon: Aperture,
+    title: "Imagens Aéreas",
+    subtitle: "Nova perspectiva",
+    caption: ["Paisagens que contam", "histórias"],
+  },
+  {
+    image: "/images/hero-drone.jpg?v=2",
+    imagePosition: "82% center",
+    imageAlt: "Produção audiovisual ao ar livre",
+    icon: Camera,
+    title: "Eventos",
+    subtitle: "Emoções reais",
+    caption: ["Momentos que ficam", "para sempre"],
+  },
+  {
+    image: "/hero-baixada.webp",
+    imagePosition: "72% center",
+    imageAlt: "Arquitetura e paisagem urbana no litoral",
+    icon: House,
+    title: "Imóveis",
+    subtitle: "Espaços em destaque",
+    caption: ["Valorizando", "cada detalhe"],
+  },
+] as const;
 
 function RotatingHeroWord() {
   const [wordIndex, setWordIndex] = useState(0);
@@ -111,22 +152,76 @@ export function Hero() {
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
 
       <div className="relative z-10 mx-auto flex min-h-[780px] max-w-[1440px] flex-col justify-center px-5 py-24 sm:min-h-[840px] sm:px-8 sm:py-28 lg:min-h-[900px] lg:px-14 lg:py-32 xl:px-20">
-        <div ref={contentRef} className="hero-parallax-content w-full max-w-[760px] text-left">
-          <div className="hero-enter hero-enter-1 mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
-            <span className="h-px w-9 bg-primary" />
-            Filmagens aéreas e terrestres
+        <div
+          ref={contentRef}
+          className="hero-parallax-content grid w-full items-center xl:grid-cols-[minmax(0,1fr)_minmax(430px,500px)] xl:gap-12 2xl:gap-16"
+        >
+          <div className="w-full max-w-[760px] text-left">
+            <div className="hero-enter hero-enter-1 mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/70 sm:text-[.8rem]">
+              <span className="h-px w-9 bg-primary" />
+              Filmagens aéreas e terrestres
+            </div>
+
+            <h1
+              aria-label="Vídeos que valorizam momentos, detalhes, espaços e negócios."
+              className="max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)] xl:text-[clamp(4.9rem,5.7vw,6.35rem)] 2xl:text-[clamp(5.5rem,6.2vw,7rem)]"
+            >
+              <span className="block">Vídeos que valorizam os</span>
+              <RotatingHeroWord />
+            </h1>
           </div>
 
-          <h1
-            aria-label="Vídeos que valorizam momentos, detalhes, espaços e negócios."
-            className="max-w-[13ch] text-balance text-[clamp(3.35rem,12vw,5.7rem)] font-semibold leading-[.9] tracking-[-.065em] text-white lg:text-[clamp(5.7rem,7.4vw,7.4rem)]"
-          >
-            <span className="block">Vídeos que valorizam os</span>
-            <RotatingHeroWord />
-          </h1>
+          <div aria-label="Destaques do portfólio" className="hidden [perspective:1400px] xl:block">
+            <div className="grid grid-cols-2 gap-3">
+              {HERO_CARDS.map((card, index) => {
+                const CardIcon = card.icon;
+                const isPrimary = index === 0;
 
+                return (
+                  <article
+                    key={card.title}
+                    className={`hero-showcase-card hero-showcase-card--${index + 1} relative overflow-hidden rounded-[20px] ${
+                      isPrimary ? "col-span-2 aspect-[1.95/1]" : "-mt-5 aspect-[1.12/1]"
+                    }`}
+                  >
+                    <Image
+                      src={card.image}
+                      alt={card.imageAlt}
+                      fill
+                      sizes={isPrimary ? "500px" : "245px"}
+                      className="object-cover"
+                      style={{ objectPosition: card.imagePosition }}
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,10,.66)_0%,rgba(4,8,10,.12)_42%,rgba(3,5,7,.84)_100%)]" />
+                    <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-white shadow-[0_0_18px_rgba(13,92,99,.3)] backdrop-blur-md">
+                          <CardIcon aria-hidden="true" size={18} strokeWidth={1.8} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block truncate text-[.76rem] font-semibold leading-tight text-white">{card.title}</span>
+                          <span className="mt-1 block truncate text-[.57rem] font-medium uppercase tracking-[.14em] text-white/55">
+                            {card.subtitle}
+                          </span>
+                        </span>
+                      </div>
+                      <span className="shrink-0 rounded-full border border-white/15 bg-black/35 px-2.5 py-1 text-[.65rem] font-semibold text-white/90 backdrop-blur-md">
+                        4K
+                      </span>
+                    </div>
+                    <div className="absolute bottom-0 right-0 flex items-start gap-3 p-4 text-[.62rem] font-semibold uppercase leading-[1.45] tracking-[.12em] text-white/88">
+                      <span aria-hidden="true" className="mt-[.48rem] h-px w-7 shrink-0 bg-primary-readable shadow-[0_0_8px_rgba(67,166,174,.65)]" />
+                      <span>
+                        <span className="block">{card.caption[0]}</span>
+                        <span className="block">{card.caption[1]}</span>
+                      </span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         </div>
-
       </div>
 
       <a
