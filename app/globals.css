@@ -90,10 +90,6 @@ body {
   pointer-events: none;
 }
 
-.hero-image {
-  animation: hero-scale 12s cubic-bezier(.2,.65,.2,1) both;
-}
-
 .hero-parallax-background,
 .hero-parallax-content {
   transition: transform .22s cubic-bezier(.2, .75, .25, 1);
@@ -175,23 +171,24 @@ body {
 .card-ambient-glow::before {
   content: "";
   position: absolute;
-  inset: -8%;
+  inset: -1px;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(13, 92, 99, 1) 0%,
-    rgba(13, 92, 99, .58) 35%,
-    rgba(13, 92, 99, .16) 58%,
-    transparent 78%
-  );
-  filter: blur(72px);
-  opacity: .4;
-  transform: translateZ(-2px) scale(.96);
+  border: 1px solid rgba(13, 92, 99, .72);
+  border-radius: inherit;
+  background: transparent;
+  box-shadow:
+    0 0 12px rgba(13, 92, 99, .34),
+    0 0 34px rgba(13, 92, 99, .23),
+    0 0 70px rgba(13, 92, 99, .12);
+  filter: blur(1.5px);
+  opacity: .58;
+  transform: translateZ(-2px);
 }
 
 .hero-showcase-card-wrap {
   position: relative;
+  border-radius: 20px;
   transform-style: preserve-3d;
   transform-origin: center center;
   will-change: transform;
@@ -224,7 +221,11 @@ body {
 }
 
 .review-card-glow::before {
-  inset: -5%;
+  inset: -1px;
+}
+
+.review-card-glow {
+  border-radius: 1rem;
 }
 
 .site-header {
@@ -360,11 +361,6 @@ body {
   animation: whatsapp-ring 2.4s ease-out infinite;
 }
 
-@keyframes hero-scale {
-  from { transform: scale(1.045); }
-  to { transform: scale(1); }
-}
-
 @keyframes hero-rise {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
@@ -425,7 +421,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero-image,
   .hero-enter,
   .hero-showcase-card-wrap,
   .site-header,

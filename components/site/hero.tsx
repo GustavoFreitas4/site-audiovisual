@@ -162,19 +162,12 @@ export function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-black sm:min-h-[840px] lg:min-h-[900px]">
+    <section ref={sectionRef} id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-[#0a0a0a] sm:min-h-[840px] lg:min-h-[900px]">
       <div ref={backgroundRef} className="hero-parallax-background absolute -inset-4">
-        <Image
-          src="/images/hero-drone.jpg?v=2"
-          alt="Pessoa segurando um drone diante de uma escultura vermelha no litoral"
-          fill
-          priority
-          sizes="100vw"
-          className="hero-image object-cover object-[62%_center] sm:object-[58%_center] lg:object-[50%_52%]"
-        />
+        <div className="absolute inset-0 bg-[#0a0a0a]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(13,92,99,.075)_0%,rgba(13,92,99,.025)_30%,transparent_58%)]" />
       </div>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,3,4,.38)_0%,rgba(3,3,4,.08)_28%,rgba(3,3,4,.48)_68%,#080809_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.84)_0%,rgba(0,0,0,.6)_48%,rgba(0,0,0,.18)_100%)] max-sm:bg-[linear-gradient(180deg,rgba(0,0,0,.56)_0%,rgba(0,0,0,.22)_34%,rgba(0,0,0,.78)_70%,rgba(8,8,9,.96)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_54%,rgba(8,8,9,.22)_76%,#080809_100%)]" />
       <div aria-hidden="true" className="film-grain absolute inset-0 opacity-[.13]" />
 
       <div aria-hidden="true" className="absolute right-[13%] top-[30%] hidden h-16 w-16 border-r border-t border-white/50 lg:block" />
