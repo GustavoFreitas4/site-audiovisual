@@ -111,6 +111,11 @@ body {
   transform: translateY(0);
 }
 
+.services-title-accent {
+  color: rgba(13, 92, 99, .7);
+  text-shadow: 0 0 24px rgba(67, 166, 174, .18);
+}
+
 .hero-scroll-mouse {
   position: relative;
   display: block;

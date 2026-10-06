@@ -222,9 +222,11 @@ export function Services() {
                   <span className="size-1.5 rounded-full bg-primary" />
                   Serviços
                 </p>
-                <h2 className="text-balance text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
-                  Do momento à imagem. Do comum ao{" "}
-                  <span className="font-serif font-normal italic text-primary">extraordinário.</span>
+                <h2 className="text-[clamp(2.7rem,9vw,4.8rem)] font-semibold leading-[.95] tracking-[-.055em]">
+                  <span className="block text-[.9em]">Do momento</span>
+                  <span className="block text-[.9em]">à imagem.</span>
+                  <span className="block whitespace-nowrap text-[.9em]">Do comum ao</span>
+                  <span className="services-title-accent block font-serif font-normal italic">extraordinário.</span>
                 </h2>
               </div>
 
