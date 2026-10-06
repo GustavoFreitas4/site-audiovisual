@@ -24,7 +24,7 @@ function RotatingHeroWord() {
       swapTimer = window.setTimeout(() => {
         setWordIndex((current) => (current + 1) % ROTATING_WORDS.length);
         setIsWordVisible(true);
-      }, 320);
+      }, 650);
     }, 2000);
 
     return () => {
@@ -141,14 +141,14 @@ export function Hero() {
       <a
         href="#servicos"
         aria-label="Rolar para explorar os serviços"
-        className="hero-scroll-indicator absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center text-white/68 transition-opacity duration-300 hover:text-white focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable sm:bottom-4"
+        className="hero-scroll-indicator absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center text-white/58 transition-opacity duration-300 hover:text-white/82 focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable sm:bottom-4"
       >
         <span aria-hidden="true" className="hero-scroll-mouse">
           <span className="hero-scroll-wheel" />
         </span>
-        <ArrowDown aria-hidden="true" size={14} strokeWidth={1.7} className="mt-1.5 text-primary-readable" />
-        <span className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-[.28em]">Role para explorar</span>
-        <span aria-hidden="true" className="mt-2 h-px w-9 bg-primary/75 shadow-[0_0_10px_rgba(13,92,99,.9)]" />
+        <ArrowDown aria-hidden="true" size={12} strokeWidth={1.35} className="hero-scroll-arrow mt-1 text-primary-readable" />
+        <span className="mt-1 whitespace-nowrap text-[.6875rem] font-medium uppercase tracking-[.25em]">Role para explorar</span>
+        <span aria-hidden="true" className="mt-1.5 h-px w-7 bg-primary/65 shadow-[0_0_8px_rgba(13,92,99,.72)]" />
       </a>
     </section>
   );
