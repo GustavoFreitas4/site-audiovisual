@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, MousePointerClick } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
-import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galleries";
-import { VideoGallery } from "./video-gallery";
 import { ServiceArea } from "./service-area";
 import { Reviews } from "./reviews";
 import { WaveBackground } from "./wave-background";
@@ -15,15 +13,11 @@ const STATS = [
 
 type Service = (typeof SERVICES)[number];
 
-const SERVICE_GALLERIES = {
-  eventos: { title: "Eventos", videos: EVENTOS_VIDEOS },
-  marcas: { title: "Marcas e Negócios", videos: MARCAS_VIDEOS },
-  imoveis: { title: "Imóveis", videos: IMOVEIS_VIDEOS },
-} as const;
-
-type ServiceGalleryId = keyof typeof SERVICE_GALLERIES;
-
-const SERVICE_GALLERY_IDS = ["eventos", "marcas", "imoveis"] as const satisfies readonly ServiceGalleryId[];
+const SERVICE_GALLERY_LINKS = [
+  { id: "eventos", href: "/servicos/eventos" },
+  { id: "marcas", href: "/servicos/marcas" },
+  { id: "imoveis", href: "/servicos/imoveis" },
+] as const;
 
 function hasFinePointer() {
   return typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === true;
@@ -32,12 +26,12 @@ function hasFinePointer() {
 function ServiceCard({
   service,
   index,
-  onOpen,
+  href,
   galleryId,
 }: {
   service: Service;
   index: number;
-  onOpen?: () => void;
+  href?: string;
   galleryId?: string;
 }) {
   const Icon = service.icon;
@@ -66,19 +60,12 @@ function ServiceCard({
   };
 
   return (
-    <article
+    <a
+      href={href}
       data-video={service.video}
       data-service-gallery={galleryId}
-      role={onOpen ? "button" : undefined}
-      tabIndex={onOpen ? 0 : undefined}
-      aria-label={onOpen ? `Abrir galeria de vídeos de ${service.title}` : undefined}
-      className={`service-row group relative grid gap-5 overflow-hidden py-8 sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${onOpen ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : ""}`}
-      onClick={onOpen}
-      onKeyDown={(event) => {
-        if (!onOpen || (event.key !== "Enter" && event.key !== " ")) return;
-        event.preventDefault();
-        onOpen();
-      }}
+      aria-label={href ? `Abrir galeria de vídeos de ${service.title}` : undefined}
+      className={`service-row group relative grid gap-5 overflow-hidden py-8 text-inherit no-underline sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${href ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : "pointer-events-none"}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -122,7 +109,7 @@ function ServiceCard({
         <Icon aria-hidden="true" size={23} strokeWidth={1.6} />
       </div>
 
-    </article>
+    </a>
   );
 }
 
@@ -195,29 +182,12 @@ function ImpactStats() {
 }
 
 export function Services() {
-  const [activeGallery, setActiveGallery] = useState<ServiceGalleryId | null>(null);
-  const activeGalleryConfig = activeGallery ? SERVICE_GALLERIES[activeGallery] : null;
-
-  const closeGallery = () => {
-    const galleryToRestore = activeGallery;
-    setActiveGallery(null);
-    requestAnimationFrame(() => {
-      if (!galleryToRestore) return;
-      document.querySelector<HTMLElement>(`[data-service-gallery="${galleryToRestore}"]`)?.focus({ preventScroll: true });
-    });
-  };
-
   return (
     <section id="servicos" className="relative isolate overflow-hidden bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
       <WaveBackground intensity={0.11} glowOpacity={0.055} segments={5} />
       <div aria-hidden="true" className="absolute left-0 top-0 z-[2] h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="relative z-[1] mx-auto max-w-[1440px]">
-        {activeGalleryConfig ? (
-          <div className="services-view-enter">
-            <VideoGallery title={activeGalleryConfig.title} videos={activeGalleryConfig.videos} onBack={closeGallery} />
-          </div>
-        ) : (
-          <div className="services-view-enter">
+          <div>
             <div className="grid gap-8 sm:gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
               <div className="max-w-lg">
                 <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
@@ -246,15 +216,15 @@ export function Services() {
 
                 <div className="divide-y divide-white/12 border-y border-white/12">
                   {SERVICES.map((service, index) => {
-                    const galleryId = SERVICE_GALLERY_IDS[index];
+                    const gallery = SERVICE_GALLERY_LINKS[index];
 
                     return (
                       <ServiceCard
                         key={service.title}
                         service={service}
                         index={index}
-                        onOpen={galleryId ? () => setActiveGallery(galleryId) : undefined}
-                        galleryId={galleryId}
+                        href={gallery?.href}
+                        galleryId={gallery?.id}
                       />
                     );
                   })}
@@ -284,7 +254,6 @@ export function Services() {
               </a>
             </div>
           </div>
-        )}
       </div>
     </section>
   );

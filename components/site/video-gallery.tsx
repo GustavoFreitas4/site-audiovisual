@@ -7,7 +7,8 @@ import type { GalleryVideo } from "@/lib/video-galleries";
 type VideoGalleryProps = {
   title: string;
   videos: readonly GalleryVideo[];
-  onBack: () => void;
+  onBack?: () => void;
+  backHref?: string;
 };
 
 type GalleryVideoTileProps = {
@@ -28,6 +29,7 @@ type SpotlightBox = {
 
 const SPOTLIGHT_DURATION = 300;
 const CONTROLS_HIDE_DELAY = 2000;
+const MAX_LOAD_RETRIES = 2;
 
 function formatVideoTime(value: number) {
   if (!Number.isFinite(value) || value < 0) return "0:00";
@@ -45,6 +47,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const isFocusedRef = useRef(false);
   const exitTimerRef = useRef<number | null>(null);
   const controlsHideTimerRef = useRef<number | null>(null);
+  const loadRetryTimerRef = useRef<number | null>(null);
   const isClosingRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -55,7 +58,13 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const [duration, setDuration] = useState(0);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [spotlightBox, setSpotlightBox] = useState<SpotlightBox | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const hasSource = Boolean(video.src?.trim());
+  const resolvedVideoSource = (() => {
+    if (!shouldLoad || !video.src) return undefined;
+    if (loadAttempt === 0) return video.src;
+    return `${video.src}${video.src.includes("?") ? "&" : "?"}retry=${loadAttempt}`;
+  })();
 
   const clearControlsHideTimer = () => {
     if (controlsHideTimerRef.current !== null) {
@@ -219,9 +228,37 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     () => () => {
       if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
       if (controlsHideTimerRef.current !== null) window.clearTimeout(controlsHideTimerRef.current);
+      if (loadRetryTimerRef.current !== null) window.clearTimeout(loadRetryTimerRef.current);
+
+      const media = videoRef.current;
+      if (media) {
+        media.pause();
+        media.muted = true;
+        media.removeAttribute("src");
+        media.load();
+      }
     },
     [],
   );
+
+  const handleVideoError = (media: HTMLVideoElement) => {
+    resetAudio();
+    setIsReady(false);
+
+    const errorCode = media.error?.code ?? 0;
+    const isPermanentSourceError = errorCode === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED;
+    if (!isPermanentSourceError && loadAttempt < MAX_LOAD_RETRIES) {
+      if (loadRetryTimerRef.current !== null) window.clearTimeout(loadRetryTimerRef.current);
+      loadRetryTimerRef.current = window.setTimeout(() => {
+        setHasError(false);
+        setLoadAttempt((current) => current + 1);
+        loadRetryTimerRef.current = null;
+      }, 600 * (loadAttempt + 1));
+      return;
+    }
+
+    setHasError(true);
+  };
 
   const activateAudio = () => {
     const media = videoRef.current;
@@ -331,7 +368,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           <video
             ref={videoRef}
             className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${isReady && !hasError ? "opacity-100" : "opacity-0"}`}
-            src={shouldLoad ? video.src : undefined}
+            src={resolvedVideoSource}
             poster={video.thumbnail}
             preload="metadata"
             autoPlay
@@ -357,11 +394,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
             onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
-            onError={() => {
-              resetAudio();
-              setHasError(true);
-              setIsReady(false);
-            }}
+            onError={(event) => handleVideoError(event.currentTarget)}
           />
         ) : null}
 
@@ -514,64 +547,40 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   );
 }
 
-export function VideoGallery({ title, videos, onBack }: VideoGalleryProps) {
-  const backButtonRef = useRef<HTMLButtonElement>(null);
-  const galleryRef = useRef<HTMLElement>(null);
+export function VideoGallery({ title, videos, onBack, backHref }: VideoGalleryProps) {
   const [focusedVideoId, setFocusedVideoId] = useState<string | null>(null);
-
-  useEffect(() => {
-    backButtonRef.current?.focus({ preventScroll: true });
-  }, []);
-
-  useEffect(() => {
-    if (!focusedVideoId) return;
-
-    const gallery = galleryRef.current;
-    if (!gallery) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) setFocusedVideoId(null);
-      },
-      { threshold: 0.01 },
-    );
-
-    const closeOnSectionNavigation = () => {
-      if (window.location.hash !== "#servicos") setFocusedVideoId(null);
-    };
-
-    observer.observe(gallery);
-    window.addEventListener("hashchange", closeOnSectionNavigation);
-    window.addEventListener("popstate", closeOnSectionNavigation);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("hashchange", closeOnSectionNavigation);
-      window.removeEventListener("popstate", closeOnSectionNavigation);
-    };
-  }, [focusedVideoId]);
 
   const leaveGallery = () => {
     setFocusedVideoId(null);
-    onBack();
+    onBack?.();
   };
 
+  const backControlClassName =
+    "group inline-flex min-h-12 w-fit items-center gap-3 rounded-full border border-white/15 bg-white/[.04] px-5 text-sm font-semibold text-white/78 transition duration-300 hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+
+  const backControlContent = (
+    <>
+      <ArrowLeft aria-hidden="true" size={17} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+      Voltar aos serviços
+    </>
+  );
+
   return (
-    <section ref={galleryRef} aria-label={`Galeria de vídeos de ${title}`}>
+    <section aria-label={`Galeria de vídeos de ${title}`}>
       <div className="mb-8 flex flex-col gap-6 border-b border-white/12 pb-7 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-3 text-xs font-semibold uppercase tracking-[.22em] text-primary-readable">Galeria de vídeos</p>
           <h2 className="text-[clamp(2.8rem,8vw,5.5rem)] font-semibold leading-[.9] tracking-[-.06em] text-white">{title}</h2>
         </div>
-        <button
-          ref={backButtonRef}
-          type="button"
-          onClick={leaveGallery}
-          className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full border border-white/15 bg-white/[.04] px-5 text-sm font-semibold text-white/78 transition duration-300 hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-        >
-          <ArrowLeft aria-hidden="true" size={17} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
-          Voltar aos serviços
-        </button>
+        {backHref ? (
+          <a href={backHref} onClick={() => setFocusedVideoId(null)} className={backControlClassName}>
+            {backControlContent}
+          </a>
+        ) : (
+          <button type="button" onClick={leaveGallery} className={backControlClassName}>
+            {backControlContent}
+          </button>
+        )}
       </div>
 
       {videos.length > 0 ? (
