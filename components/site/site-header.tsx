@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 
 const NAV_ITEMS = [
   { id: "inicio", label: "Início" },
@@ -23,32 +23,65 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const visibleSections = new Set<string>();
     const sections = NAV_ITEMS.map(({ id }) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section));
+    let animationFrame = 0;
 
     const updateActiveSection = () => {
-      const focusLine = window.innerHeight * 0.36;
-      const visible = sections
-        .filter((section) => visibleSections.has(section.id))
-        .sort((first, second) => Math.abs(first.getBoundingClientRect().top - focusLine) - Math.abs(second.getBoundingClientRect().top - focusLine));
+      const headerHeight = document.querySelector<HTMLElement>(".site-header")?.offsetHeight ?? 72;
+      const focusLine = headerHeight + Math.min(window.innerHeight * 0.22, 180);
+      const atPageEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      let currentSection = sections[0];
 
-      if (visible[0]) setActiveSection(visible[0].id as (typeof NAV_ITEMS)[number]["id"]);
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= focusLine) currentSection = section;
+      }
+
+      if (atPageEnd) currentSection = sections.at(-1);
+      if (currentSection) setActiveSection(currentSection.id as (typeof NAV_ITEMS)[number]["id"]);
+    };
+
+    const scheduleActiveSectionUpdate = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(() => {
+        updateActiveSection();
+        animationFrame = 0;
+      });
     };
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) visibleSections.add(entry.target.id);
-          else visibleSections.delete(entry.target.id);
-        });
-        updateActiveSection();
-      },
-      { rootMargin: "-24% 0px -58% 0px", threshold: 0 },
+      scheduleActiveSectionUpdate,
+      { rootMargin: "-15% 0px -65% 0px", threshold: [0, 0.1] },
     );
 
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    updateActiveSection();
+    window.addEventListener("scroll", scheduleActiveSectionUpdate, { passive: true });
+    window.addEventListener("resize", scheduleActiveSectionUpdate);
+    window.addEventListener("hashchange", scheduleActiveSectionUpdate);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", scheduleActiveSectionUpdate);
+      window.removeEventListener("resize", scheduleActiveSectionUpdate);
+      window.removeEventListener("hashchange", scheduleActiveSectionUpdate);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
   }, []);
+
+  const navigateToSection = (event: MouseEvent<HTMLAnchorElement>, id: (typeof NAV_ITEMS)[number]["id"]) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    event.preventDefault();
+    const hash = `#${id}`;
+    if (window.location.hash === hash) window.history.replaceState(null, "", hash);
+    else window.history.pushState(null, "", hash);
+    setActiveSection(id);
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <header
@@ -59,7 +92,12 @@ export function Header() {
       }`}
     >
       <div className="relative mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 min-[900px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-14 xl:px-20">
-        <a href="#inicio" aria-label="Gustavo Freitas — início" className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+        <a
+          href="#inicio"
+          onClick={(event) => navigateToSection(event, "inicio")}
+          aria-label="Gustavo Freitas — início"
+          className="col-start-1 flex min-w-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >
           <span className="block w-[clamp(8rem,24vw,11.5rem)] shrink-0">
             <Image
               src="/gustavo-freitas-logo.png"
@@ -81,6 +119,7 @@ export function Header() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
+                onClick={(event) => navigateToSection(event, item.id)}
                 aria-current={isActive ? "location" : undefined}
                 className={`relative py-2 text-xs font-semibold tracking-[.02em] transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-center after:bg-primary-readable after:transition-transform after:duration-300 ${
                   isActive ? "text-primary-readable after:scale-x-100" : "text-white/62 after:scale-x-0 hover:text-white"
