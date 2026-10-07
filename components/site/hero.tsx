@@ -166,6 +166,33 @@ export function Hero() {
       <div ref={backgroundRef} className="hero-parallax-background absolute -inset-4">
         <div className="hero-background-surface absolute inset-0" />
       </div>
+      <div aria-hidden="true" className="hero-wave-field">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <g className="hero-wave-group hero-wave-group--upper">
+            <path d="M-140 92C150-42 390 226 720 70S1260-8 1740 112" />
+            <path className="hero-wave-detail" d="M-140 112C154-24 394 246 724 88S1264 8 1740 132" />
+            <path d="M-140 132C158-6 398 266 728 106S1268 24 1740 152" />
+            <path className="hero-wave-detail" d="M-140 152C162 12 402 286 732 124S1272 40 1740 172" />
+            <path d="M-140 172C166 30 406 306 736 142S1276 56 1740 192" />
+            <path className="hero-wave-detail" d="M-140 192C170 48 410 326 740 160S1280 72 1740 212" />
+            <path d="M-140 212C174 66 414 346 744 178S1284 88 1740 232" />
+            <path className="hero-wave-detail" d="M-140 232C178 84 418 366 748 196S1288 104 1740 252" />
+            <path d="M-140 252C182 102 422 386 752 214S1292 120 1740 272" />
+          </g>
+
+          <g className="hero-wave-group hero-wave-group--lower">
+            <path d="M-140 620C160 448 400 846 760 656S1260 500 1740 704" />
+            <path className="hero-wave-detail" d="M-140 642C164 468 404 868 764 676S1264 520 1740 726" />
+            <path d="M-140 664C168 488 408 890 768 696S1268 540 1740 748" />
+            <path className="hero-wave-detail" d="M-140 686C172 508 412 912 772 716S1272 560 1740 770" />
+            <path d="M-140 708C176 528 416 934 776 736S1276 580 1740 792" />
+            <path className="hero-wave-detail" d="M-140 730C180 548 420 956 780 756S1280 600 1740 814" />
+            <path d="M-140 752C184 568 424 978 784 776S1284 620 1740 836" />
+            <path className="hero-wave-detail" d="M-140 774C188 588 428 1000 788 796S1288 640 1740 858" />
+            <path d="M-140 796C192 608 432 1022 792 816S1292 660 1740 880" />
+          </g>
+        </svg>
+      </div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_54%,rgba(8,8,9,.22)_76%,#080809_100%)]" />
       <div aria-hidden="true" className="film-grain absolute inset-0 opacity-[.13]" />
 

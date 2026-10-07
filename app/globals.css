@@ -106,26 +106,43 @@ body {
     linear-gradient(118deg, #050707 0%, #070909 53%, #061416 100%);
 }
 
-/* Fundo da Hero — linhas abstratas fluidas, concentradas nas bordas inferior esquerda e superior direita. */
-.hero-background-surface::before {
-  content: "";
+/* Fundo da Hero — SVG responsivo com ondas orgânicas e glow leve, sempre atrás do conteúdo. */
+.hero-wave-field {
   position: absolute;
-  inset: -10%;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
-  background:
-    repeating-radial-gradient(ellipse 48% 36% at -4% 104%, transparent 0 16px, rgba(0, 140, 150, .24) 16.5px 17.25px, transparent 17.75px 30px),
-    repeating-radial-gradient(ellipse 44% 34% at 104% -4%, transparent 0 18px, rgba(0, 140, 150, .18) 18.5px 19.25px, transparent 19.75px 34px);
-  -webkit-mask-image:
-    radial-gradient(ellipse 72% 64% at 0% 100%, #000 0%, rgba(0, 0, 0, .92) 46%, transparent 78%),
-    radial-gradient(ellipse 68% 60% at 100% 0%, #000 0%, rgba(0, 0, 0, .88) 44%, transparent 76%);
-  mask-image:
-    radial-gradient(ellipse 72% 64% at 0% 100%, #000 0%, rgba(0, 0, 0, .92) 46%, transparent 78%),
-    radial-gradient(ellipse 68% 60% at 100% 0%, #000 0%, rgba(0, 0, 0, .88) 44%, transparent 76%);
-  opacity: .44;
-  mix-blend-mode: screen;
+  color: #0d5c63;
+  filter: drop-shadow(0 0 5px rgba(13, 92, 99, .2));
 }
 
-/* Fundo da Hero — ajuste responsivo dos glows e das linhas para telas menores. */
+.hero-wave-field svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-wave-group {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+.hero-wave-group path {
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-wave-group--upper {
+  opacity: .27;
+}
+
+.hero-wave-group--lower {
+  opacity: .23;
+}
+
+/* Fundo da Hero — ajuste responsivo dos glows e simplificação das ondas em telas menores. */
 @media (max-width: 767px) {
   .hero-background-surface {
     background:
@@ -134,18 +151,20 @@ body {
       linear-gradient(152deg, #050707 0%, #070909 62%, #061214 100%);
   }
 
-  .hero-background-surface::before {
-    inset: -5%;
-    background:
-      repeating-radial-gradient(ellipse 76% 32% at -12% 104%, transparent 0 18px, rgba(0, 140, 150, .19) 18.5px 19.2px, transparent 19.7px 33px),
-      repeating-radial-gradient(ellipse 68% 30% at 112% -4%, transparent 0 20px, rgba(0, 140, 150, .14) 20.5px 21.2px, transparent 21.7px 36px);
-    -webkit-mask-image:
-      radial-gradient(ellipse 92% 52% at 0% 100%, #000 0%, rgba(0, 0, 0, .8) 42%, transparent 78%),
-      radial-gradient(ellipse 86% 48% at 100% 0%, #000 0%, rgba(0, 0, 0, .74) 40%, transparent 76%);
-    mask-image:
-      radial-gradient(ellipse 92% 52% at 0% 100%, #000 0%, rgba(0, 0, 0, .8) 42%, transparent 78%),
-      radial-gradient(ellipse 86% 48% at 100% 0%, #000 0%, rgba(0, 0, 0, .74) 40%, transparent 76%);
-    opacity: .28;
+  .hero-wave-field {
+    filter: drop-shadow(0 0 4px rgba(13, 92, 99, .16));
+  }
+
+  .hero-wave-detail {
+    display: none;
+  }
+
+  .hero-wave-group--upper {
+    opacity: .21;
+  }
+
+  .hero-wave-group--lower {
+    opacity: .18;
   }
 }
 
