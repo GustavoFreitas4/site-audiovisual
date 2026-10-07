@@ -106,40 +106,40 @@ body {
     linear-gradient(118deg, #050707 0%, #070909 53%, #061416 100%);
 }
 
-/* Fundo da Hero — SVG responsivo com ondas orgânicas e glow leve, sempre atrás do conteúdo. */
-.hero-wave-field {
+/* Ondas decorativas reutilizáveis: intensidade e glow são definidos por seção. */
+.wave-background {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  color: #0d5c63;
-  filter: drop-shadow(0 0 5px rgba(13, 92, 99, .2));
+  color: var(--wave-color, #0d5c63);
+  filter: drop-shadow(0 0 5px rgb(13 92 99 / var(--wave-glow-opacity, .08)));
 }
 
-.hero-wave-field svg {
+.wave-background svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.hero-wave-group {
+.wave-background-group {
   fill: none;
   stroke: currentColor;
   stroke-width: 1.15;
   stroke-linecap: round;
 }
 
-.hero-wave-group path {
+.wave-background-group path {
   vector-effect: non-scaling-stroke;
 }
 
-.hero-wave-group--upper {
-  opacity: .27;
+.wave-background-group--upper {
+  opacity: var(--wave-upper-opacity, .12);
 }
 
-.hero-wave-group--lower {
-  opacity: .23;
+.wave-background-group--lower {
+  opacity: var(--wave-lower-opacity, .1);
 }
 
 /* Fundo da Hero — ajuste responsivo dos glows e simplificação das ondas em telas menores. */
@@ -151,20 +151,20 @@ body {
       linear-gradient(152deg, #050707 0%, #070909 62%, #061214 100%);
   }
 
-  .hero-wave-field {
-    filter: drop-shadow(0 0 4px rgba(13, 92, 99, .16));
+  .wave-background {
+    filter: drop-shadow(0 0 4px rgb(13 92 99 / var(--wave-glow-opacity, .08)));
   }
 
-  .hero-wave-detail {
+  .wave-background-detail {
     display: none;
   }
 
-  .hero-wave-group--upper {
-    opacity: .21;
+  .wave-background-group--upper {
+    opacity: var(--wave-mobile-upper-opacity, .09);
   }
 
-  .hero-wave-group--lower {
-    opacity: .18;
+  .wave-background-group--lower {
+    opacity: var(--wave-mobile-lower-opacity, .08);
   }
 }
 

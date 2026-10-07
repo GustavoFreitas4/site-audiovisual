@@ -7,6 +7,7 @@ import { EVENTOS_VIDEOS, IMOVEIS_VIDEOS, MARCAS_VIDEOS } from "@/lib/video-galle
 import { VideoGallery } from "./video-gallery";
 import { ServiceArea } from "./service-area";
 import { Reviews } from "./reviews";
+import { WaveBackground } from "./wave-background";
 
 const STATS = [
   { value: 100, prefix: "+", suffix: "", label: "produções entregues" },
@@ -207,9 +208,10 @@ export function Services() {
   };
 
   return (
-    <section id="servicos" className="relative bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
-      <div aria-hidden="true" className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="mx-auto max-w-[1440px]">
+    <section id="servicos" className="relative isolate overflow-hidden bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
+      <WaveBackground intensity={0.11} glowOpacity={0.055} segments={5} />
+      <div aria-hidden="true" className="absolute left-0 top-0 z-[2] h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      <div className="relative z-[1] mx-auto max-w-[1440px]">
         {activeGalleryConfig ? (
           <div className="services-view-enter">
             <VideoGallery title={activeGalleryConfig.title} videos={activeGalleryConfig.videos} onBack={closeGallery} />

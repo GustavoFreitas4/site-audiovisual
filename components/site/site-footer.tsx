@@ -1,9 +1,11 @@
 import Image from "next/image";
+import { WaveBackground } from "./wave-background";
 
 export function Footer() {
   return (
-    <footer className="bg-black">
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-14 xl:px-20">
+    <footer className="relative isolate overflow-hidden bg-black">
+      <WaveBackground intensity={0.085} glowOpacity={0.04} align="bottom" />
+      <div className="relative z-[1] mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-5 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-14 xl:px-20">
         <a
           href="#inicio"
           aria-label="Gustavo Freitas — voltar ao início"
