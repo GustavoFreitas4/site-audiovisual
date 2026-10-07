@@ -53,14 +53,14 @@ export function ServiceArea() {
       aria-labelledby="service-area-title"
       className="mt-20 grid items-center gap-8 text-white sm:mt-28 sm:gap-10 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-12 xl:gap-16"
     >
-        <h2 id="service-area-title" className="max-w-[18ch] text-balance text-[clamp(2.15rem,7vw,5rem)] font-normal leading-[1.04] tracking-[-.045em] text-white/52">
+        <h2 data-reveal="title" id="service-area-title" className="max-w-[18ch] text-balance text-[clamp(2.15rem,7vw,5rem)] font-normal leading-[1.04] tracking-[-.045em] text-white/52">
           <span className="lg:block lg:whitespace-nowrap">Atendemos toda</span>{" "}
           <strong className="font-semibold text-white lg:block lg:whitespace-nowrap">BAIXADA SANTISTA</strong>{" "}
           <span className="lg:block lg:whitespace-nowrap">e estado de</span>{" "}
           <strong className="font-semibold text-white lg:block lg:whitespace-nowrap">SÃO PAULO</strong>
         </h2>
 
-        <div className="mx-auto w-full max-w-[540px] lg:justify-self-end">
+        <div data-reveal="media" className="mx-auto w-full max-w-[540px] lg:justify-self-end">
           <svg
             viewBox="0 0 900 520"
             preserveAspectRatio="xMidYMid meet"

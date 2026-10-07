@@ -1,0 +1,4 @@
+# Os vídeos mantêm nomes fixos e podem ser substituídos. O navegador guarda o
+# arquivo localmente, mas sempre revalida o ETag antes de reutilizá-lo.
+/videos/*
+  Cache-Control: public, max-age=0, must-revalidate

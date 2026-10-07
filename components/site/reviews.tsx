@@ -1,4 +1,5 @@
 import { MoreHorizontal, Star } from "lucide-react";
+import type { CSSProperties } from "react";
 
 const REVIEWS = [
   {
@@ -55,7 +56,7 @@ function RatingStars({ rating, className = "size-5" }: { rating: number; classNa
 export function Reviews() {
   return (
     <section id="avaliacoes" aria-labelledby="reviews-title" className="mt-20 sm:mt-28">
-      <header className="text-center">
+      <header data-reveal="title" className="text-center">
         <p className="mb-3 text-[.7rem] font-semibold uppercase tracking-[.24em] text-primary-readable">Depoimentos</p>
         <h2 id="reviews-title" className="text-balance text-[clamp(2.2rem,6vw,4.4rem)] font-semibold leading-[.98] tracking-[-.05em]">
           O que nossos clientes dizem
@@ -63,7 +64,7 @@ export function Reviews() {
         <p className="mt-3 text-sm text-white/45 sm:text-base">Avaliações no Google</p>
       </header>
 
-      <div className="mx-auto mt-9 flex max-w-4xl flex-col items-center justify-center gap-7 border-y border-white/10 py-7 sm:mt-11 sm:flex-row sm:gap-10 sm:py-8">
+      <div data-reveal="group" style={{ "--reveal-delay": "90ms" } as CSSProperties} className="mx-auto mt-9 flex max-w-4xl flex-col items-center justify-center gap-7 border-y border-white/10 py-7 sm:mt-11 sm:flex-row sm:gap-10 sm:py-8">
         <div className="flex items-center gap-5 sm:gap-7">
           <span className="font-serif text-6xl italic leading-none tracking-[-.05em] text-white sm:text-7xl">5.0</span>
           <div>
@@ -85,8 +86,13 @@ export function Reviews() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-5">
-        {REVIEWS.map((review) => (
-          <div key={review.name} className="card-ambient-glow review-card-glow h-full">
+        {REVIEWS.map((review, index) => (
+          <div
+            key={review.name}
+            data-reveal="card"
+            style={{ "--reveal-delay": `${150 + index * 70}ms` } as CSSProperties}
+            className="card-ambient-glow review-card-glow h-full"
+          >
             <article className="group relative z-[1] flex h-full min-h-64 flex-col rounded-2xl border border-white/10 bg-white/[.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:bg-primary/[.07] hover:shadow-[0_18px_50px_rgba(13,92,99,.13)] sm:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">

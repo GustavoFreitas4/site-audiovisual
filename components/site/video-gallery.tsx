@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Film, Pause, Play, RotateCcw, RotateCw, Volume2, VolumeX, X } from "lucide-react";
 import type { GalleryVideo } from "@/lib/video-galleries";
 
@@ -172,7 +172,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
           resetAudio();
         }
       },
-      { rootMargin: "80px 0px", threshold: 0.08 },
+      { rootMargin: "180px 0px", threshold: 0.06 },
     );
 
     observer.observe(tile);
@@ -339,6 +339,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
       className={`relative aspect-[9/16] transition-opacity duration-300 ${isFocused ? "z-[90]" : "z-0"} ${isDimmed ? "pointer-events-none opacity-35" : "opacity-100"}`}
     >
       <div
+        data-reveal="card"
         onPointerMove={revealControls}
         onPointerDownCapture={revealControls}
         className={`${isFocused && spotlightBox ? "fixed z-[100]" : "absolute inset-0"} overflow-hidden bg-[#111113] shadow-none transition-[left,top,width,height,box-shadow] duration-300 ease-out ${isFocused ? "shadow-[0_30px_90px_rgba(0,0,0,.78)]" : ""}`}
@@ -349,8 +350,9 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
                 top: spotlightBox.top,
                 width: spotlightBox.width,
                 height: spotlightBox.height,
-              }
-            : undefined
+                "--reveal-delay": `${Math.min(index, 5) * 65}ms`,
+              } as CSSProperties
+            : ({ "--reveal-delay": `${Math.min(index, 5) * 65}ms` } as CSSProperties)
         }
       >
         <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(13,92,99,.16),transparent_62%)] text-center">
@@ -567,7 +569,7 @@ export function VideoGallery({ title, videos, onBack, backHref }: VideoGalleryPr
 
   return (
     <section aria-label={`Galeria de vídeos de ${title}`}>
-      <div className="mb-8 flex flex-col gap-6 border-b border-white/12 pb-7 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+      <div data-reveal="title" className="mb-8 flex flex-col gap-6 border-b border-white/12 pb-7 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-3 text-xs font-semibold uppercase tracking-[.22em] text-primary-readable">Galeria de vídeos</p>
           <h2 className="text-[clamp(2.8rem,8vw,5.5rem)] font-semibold leading-[.9] tracking-[-.06em] text-white">{title}</h2>

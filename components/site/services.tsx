@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, MousePointerClick } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { ServiceArea } from "./service-area";
@@ -35,14 +35,20 @@ function ServiceCard({
   galleryId?: string;
 }) {
   const Icon = service.icon;
+  const cardRef = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isHoveredRef = useRef(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [videoState, setVideoState] = useState<"idle" | "ready" | "error">("idle");
 
   const handleMouseEnter = () => {
     if (videoState === "error" || !hasFinePointer()) return;
 
+    isHoveredRef.current = true;
+    setShouldLoadVideo(true);
+
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !video.currentSrc) return;
 
     video.currentTime = 0;
     const playPromise = video.play();
@@ -52,6 +58,7 @@ function ServiceCard({
   };
 
   const handleMouseLeave = () => {
+    isHoveredRef.current = false;
     const video = videoRef.current;
     if (!video) return;
 
@@ -59,27 +66,70 @@ function ServiceCard({
     video.currentTime = 0;
   };
 
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setShouldLoadVideo(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setShouldLoadVideo(true);
+        observer.disconnect();
+      },
+      { rootMargin: "280px 0px", threshold: 0.01 },
+    );
+
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(
+    () => () => {
+      const video = videoRef.current;
+      if (!video) return;
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    },
+    [],
+  );
+
   return (
     <a
+      ref={cardRef}
       href={href}
+      data-reveal="card"
       data-video={service.video}
       data-service-gallery={galleryId}
       aria-label={href ? `Abrir galeria de vídeos de ${service.title}` : undefined}
       className={`service-row group relative grid gap-5 overflow-hidden py-8 text-inherit no-underline sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${href ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : "pointer-events-none"}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={{ "--reveal-delay": `${index * 75}ms` } as CSSProperties}
     >
       <video
         ref={videoRef}
         className="service-video pointer-events-none absolute inset-0 h-full w-full object-cover"
-        src={service.video}
+        src={shouldLoadVideo ? service.video : undefined}
         muted
         loop
         playsInline
-        preload="none"
+        preload="metadata"
         aria-hidden="true"
         tabIndex={-1}
-        onLoadedData={() => setVideoState("ready")}
+        onLoadedData={(event) => {
+          setVideoState("ready");
+          if (isHoveredRef.current) {
+            event.currentTarget.play().catch(() => {
+              // O hover visual continua funcional se a reprodução for bloqueada.
+            });
+          }
+        }}
         onError={() => setVideoState("error")}
       />
       <div aria-hidden="true" className="service-video-overlay pointer-events-none absolute inset-0" />
@@ -166,7 +216,7 @@ function ImpactStats() {
   }, [started]);
 
   return (
-    <div ref={statsRef} className="mx-auto mt-14 grid max-w-sm grid-cols-1 justify-items-center gap-8 border-y border-white/10 py-10 text-center sm:mt-20 sm:py-12">
+    <div ref={statsRef} data-reveal="group" className="mx-auto mt-14 grid max-w-sm grid-cols-1 justify-items-center gap-8 border-y border-white/10 py-10 text-center sm:mt-20 sm:py-12">
       {STATS.map((stat, index) => (
         <div key={stat.label}>
           <p className="font-serif text-[clamp(2.2rem,6vw,3.8rem)] font-normal italic leading-none tracking-[-.04em] text-primary-readable">
@@ -185,11 +235,11 @@ export function Services() {
   return (
     <section id="servicos" className="relative isolate overflow-hidden bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
       <WaveBackground intensity={0.11} glowOpacity={0.055} segments={5} />
-      <div aria-hidden="true" className="absolute left-0 top-0 z-[2] h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      <div aria-hidden="true" data-draw-line className="absolute left-0 top-0 z-[2] h-px w-full origin-left bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="relative z-[1] mx-auto max-w-[1440px]">
           <div>
             <div className="grid gap-8 sm:gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
-              <div className="max-w-lg">
+              <div data-reveal="title" className="max-w-lg">
                 <p className="mb-5 flex items-center gap-3 text-[.76rem] font-semibold uppercase tracking-[.22em] text-white/45">
                   <span className="size-1.5 rounded-full bg-primary" />
                   Serviços
@@ -204,6 +254,7 @@ export function Services() {
 
               <div>
                 <button
+                  data-reveal="control"
                   type="button"
                   onClick={() => document.querySelector<HTMLElement>('[data-service-gallery="eventos"]')?.focus({ preventScroll: true })}
                   className="group mb-5 inline-flex cursor-pointer items-center gap-3 rounded-full border border-primary/45 bg-primary/10 px-4 py-2.5 text-sm font-semibold tracking-[.01em] text-white transition duration-300 hover:border-primary-readable/70 hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-readable sm:mb-6 sm:text-base"
@@ -238,7 +289,7 @@ export function Services() {
 
             <ImpactStats />
 
-            <div className="mt-14 flex flex-col gap-5 border-l-2 border-primary pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
+            <div data-reveal="group" className="mt-14 flex flex-col gap-5 border-l-2 border-primary pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
               <div>
                 <p className="text-xl font-semibold tracking-[-.02em] sm:text-2xl">Tem uma ideia em mente?</p>
                 <p className="mt-1 text-sm text-white/48 sm:text-base">Conte para a gente. O orçamento é rápido e sem compromisso.</p>

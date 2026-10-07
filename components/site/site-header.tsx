@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type MouseEvent, useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 
 const NAV_ITEMS = [
   { id: "inicio", label: "Início" },
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export function Header() {
+  const navigationRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<(typeof NAV_ITEMS)[number]["id"]>("inicio");
 
@@ -21,6 +22,28 @@ export function Header() {
     window.addEventListener("scroll", updateHeader, { passive: true });
     return () => window.removeEventListener("scroll", updateHeader);
   }, []);
+
+  useEffect(() => {
+    const navigation = navigationRef.current;
+    if (!navigation) return;
+
+    let animationFrame = 0;
+    const updateIndicator = () => {
+      const activeLink = navigation.querySelector<HTMLElement>(`[data-section-id="${activeSection}"]`);
+      if (!activeLink) return;
+      navigation.style.setProperty("--nav-indicator-x", `${activeLink.offsetLeft}px`);
+      navigation.style.setProperty("--nav-indicator-width", `${activeLink.offsetWidth}px`);
+      navigation.style.setProperty("--nav-indicator-opacity", "1");
+    };
+
+    animationFrame = window.requestAnimationFrame(updateIndicator);
+    window.addEventListener("resize", updateIndicator);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [activeSection]);
 
   useEffect(() => {
     const sections = NAV_ITEMS.map(({ id }) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section));
@@ -36,7 +59,7 @@ export function Header() {
         if (section.getBoundingClientRect().top <= focusLine) currentSection = section;
       }
 
-      if (atPageEnd) currentSection = sections.at(-1);
+      if (atPageEnd) currentSection = sections.at(-1) ?? currentSection;
       if (currentSection) setActiveSection(currentSection.id as (typeof NAV_ITEMS)[number]["id"]);
     };
 
@@ -55,13 +78,11 @@ export function Header() {
 
     sections.forEach((section) => observer.observe(section));
     updateActiveSection();
-    window.addEventListener("scroll", scheduleActiveSectionUpdate, { passive: true });
     window.addEventListener("resize", scheduleActiveSectionUpdate);
     window.addEventListener("hashchange", scheduleActiveSectionUpdate);
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("scroll", scheduleActiveSectionUpdate);
       window.removeEventListener("resize", scheduleActiveSectionUpdate);
       window.removeEventListener("hashchange", scheduleActiveSectionUpdate);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
@@ -111,7 +132,8 @@ export function Header() {
           </span>
         </a>
 
-        <nav aria-label="Navegação principal" className="col-start-2 hidden items-center gap-6 min-[900px]:flex xl:gap-8">
+        <nav ref={navigationRef} aria-label="Navegação principal" className="relative col-start-2 hidden items-center gap-6 min-[900px]:flex xl:gap-8">
+          <span aria-hidden="true" className="nav-active-indicator absolute bottom-0 left-0 h-px bg-primary-readable" />
           {NAV_ITEMS.map((item) => {
             const isActive = activeSection === item.id;
 
@@ -119,10 +141,11 @@ export function Header() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
+                data-section-id={item.id}
                 onClick={(event) => navigateToSection(event, item.id)}
                 aria-current={isActive ? "location" : undefined}
-                className={`relative py-2 text-xs font-semibold tracking-[.02em] transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-center after:bg-primary-readable after:transition-transform after:duration-300 ${
-                  isActive ? "text-primary-readable after:scale-x-100" : "text-white/62 after:scale-x-0 hover:text-white"
+                className={`relative py-2 text-xs font-semibold tracking-[.02em] transition-colors duration-300 ${
+                  isActive ? "text-primary-readable" : "text-white/62 hover:text-white"
                 }`}
               >
                 {item.label}

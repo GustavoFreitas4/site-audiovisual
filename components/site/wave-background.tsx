@@ -61,7 +61,7 @@ export function WaveBackground({
   };
 
   return (
-    <div aria-hidden="true" className={`wave-background ${className}`.trim()} style={style}>
+    <div aria-hidden="true" data-draw-waves className={`wave-background ${className}`.trim()} style={style}>
       <svg
         viewBox={`0 0 1600 ${900 * safeSegments}`}
         preserveAspectRatio={align === "bottom" ? "xMidYMax slice" : "xMidYMid slice"}
@@ -72,6 +72,7 @@ export function WaveBackground({
               {UPPER_WAVES.map((path, pathIndex) => (
                 <path
                   key={path}
+                  pathLength={1}
                   className={pathIndex % 2 ? "wave-background-detail" : undefined}
                   d={path}
                 />
@@ -82,6 +83,7 @@ export function WaveBackground({
               {LOWER_WAVES.map((path, pathIndex) => (
                 <path
                   key={path}
+                  pathLength={1}
                   className={pathIndex % 2 ? "wave-background-detail" : undefined}
                   d={path}
                 />

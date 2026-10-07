@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
+import { MotionController } from "@/components/site/motion-controller";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -107,6 +108,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${manrope.variable} ${playfair.variable}`}>
       <body>
+        <MotionController />
         {children}
         <script
           type="application/ld+json"
