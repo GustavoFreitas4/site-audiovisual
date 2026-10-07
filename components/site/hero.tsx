@@ -164,8 +164,7 @@ export function Hero() {
   return (
     <section ref={sectionRef} id="inicio" className="relative isolate min-h-[780px] overflow-hidden bg-[#0a0a0a] sm:min-h-[840px] lg:min-h-[900px]">
       <div ref={backgroundRef} className="hero-parallax-background absolute -inset-4">
-        <div className="absolute inset-0 bg-[#0a0a0a]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(13,92,99,.075)_0%,rgba(13,92,99,.025)_30%,transparent_58%)]" />
+        <div className="hero-background-surface absolute inset-0" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_54%,rgba(8,8,9,.22)_76%,#080809_100%)]" />
       <div aria-hidden="true" className="film-grain absolute inset-0 opacity-[.13]" />

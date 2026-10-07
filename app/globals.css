@@ -96,6 +96,22 @@ body {
   will-change: transform;
 }
 
+.hero-background-surface {
+  background:
+    radial-gradient(ellipse 56% 48% at 9% 86%, rgba(0, 100, 110, .1) 0%, rgba(0, 100, 110, .045) 34%, transparent 72%),
+    radial-gradient(ellipse 54% 56% at 78% 42%, rgba(13, 92, 99, .1) 0%, rgba(13, 92, 99, .038) 38%, transparent 72%),
+    linear-gradient(118deg, #050707 0%, #070909 52%, #061416 100%);
+}
+
+@media (max-width: 767px) {
+  .hero-background-surface {
+    background:
+      radial-gradient(ellipse 82% 40% at 0% 82%, rgba(0, 100, 110, .08) 0%, rgba(0, 100, 110, .035) 36%, transparent 74%),
+      radial-gradient(ellipse 72% 46% at 92% 36%, rgba(13, 92, 99, .07) 0%, rgba(13, 92, 99, .025) 42%, transparent 76%),
+      linear-gradient(152deg, #050707 0%, #070909 62%, #061214 100%);
+  }
+}
+
 .hero-rotating-word {
   opacity: 0;
   color: rgba(13, 92, 99, .78);
