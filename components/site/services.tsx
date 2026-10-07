@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, MousePointerClick } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { ServiceArea } from "./service-area";
@@ -138,6 +138,60 @@ function ImpactStats() {
   );
 }
 
+function FinalCallToAction() {
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  const updateCursorGlow = (event: PointerEvent<HTMLDivElement>) => {
+    const cta = ctaRef.current;
+    if (!cta || event.pointerType === "touch") return;
+
+    const rect = cta.getBoundingClientRect();
+    cta.style.setProperty("--cta-cursor-x", `${event.clientX - rect.left}px`);
+    cta.style.setProperty("--cta-cursor-y", `${event.clientY - rect.top}px`);
+  };
+
+  return (
+    <div
+      ref={ctaRef}
+      data-reveal="group"
+      onPointerMove={updateCursorGlow}
+      className="final-cta relative mt-14 overflow-hidden border-y border-white/10 py-12 sm:mt-20 sm:py-16 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-16 lg:py-20"
+    >
+      <div aria-hidden="true" className="final-cta-cursor-glow absolute inset-0" />
+
+      <div className="relative z-[1] max-w-3xl">
+        <h2 data-reveal="title" className="text-[clamp(4rem,9vw,8rem)] font-semibold leading-[.82] tracking-[-.065em] text-white">
+          <span className="block">Tem uma</span>
+          <span className="block">ideia em</span>
+          <span className="services-title-accent block font-serif font-normal italic">mente?</span>
+        </h2>
+
+        <p data-reveal="text" className="mt-7 max-w-2xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8 lg:text-xl">
+          Conte para a gente. O orçamento é rápido e sem compromisso.
+        </p>
+
+        <div data-reveal="control" className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[.035] px-3.5 py-2 text-xs font-medium tracking-[.02em] text-white/62 backdrop-blur-sm sm:text-sm">
+          <span aria-hidden="true" className="final-cta-online-dot relative size-2 rounded-full bg-[#25d366]" />
+          Resposta em até 1 hora
+        </div>
+      </div>
+
+      <div data-reveal="control" className="relative z-[1] mt-10 lg:mt-0 lg:justify-self-end">
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="final-cta-whatsapp group inline-flex min-h-14 w-fit items-center gap-3 rounded-full border border-[#58e98e]/45 bg-[#25d366] px-7 text-sm font-bold text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#8cf0b0]/70 hover:bg-[#20bd5a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-base"
+        >
+          <img src="/whatsapp.svg" alt="" aria-hidden="true" className="final-cta-whatsapp-icon size-5 shrink-0" />
+          Conversar no WhatsApp
+          <ArrowUpRight aria-hidden="true" size={17} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export function Services() {
   return (
     <section id="servicos" className="relative isolate overflow-hidden bg-[#080809] px-5 py-24 text-white sm:px-8 sm:py-32 lg:px-14 lg:py-40 xl:px-20">
@@ -196,21 +250,7 @@ export function Services() {
 
             <ImpactStats />
 
-            <div data-reveal="group" className="mt-14 flex flex-col gap-5 border-l-2 border-primary pl-5 sm:mt-20 sm:flex-row sm:items-center sm:justify-between sm:pl-7">
-              <div>
-                <p className="text-xl font-semibold tracking-[-.02em] sm:text-2xl">Tem uma ideia em mente?</p>
-                <p className="mt-1 text-sm text-white/48 sm:text-base">Conte para a gente. O orçamento é rápido e sem compromisso.</p>
-              </div>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="group inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-white px-5 text-sm font-bold text-black transition hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              >
-                Conversar no WhatsApp
-                <ArrowUpRight aria-hidden="true" size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-            </div>
+            <FinalCallToAction />
           </div>
       </div>
     </section>
