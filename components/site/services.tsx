@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, MousePointerClick } from "lucide-react";
 import { SERVICES, WHATSAPP_URL } from "@/lib/site-data";
 import { ServiceArea } from "./service-area";
@@ -139,28 +139,13 @@ function ImpactStats() {
 }
 
 function FinalCallToAction() {
-  const ctaRef = useRef<HTMLDivElement>(null);
-
-  const updateCursorGlow = (event: PointerEvent<HTMLDivElement>) => {
-    const cta = ctaRef.current;
-    if (!cta || event.pointerType === "touch") return;
-
-    const rect = cta.getBoundingClientRect();
-    cta.style.setProperty("--cta-cursor-x", `${event.clientX - rect.left}px`);
-    cta.style.setProperty("--cta-cursor-y", `${event.clientY - rect.top}px`);
-  };
-
   return (
     <div
-      ref={ctaRef}
       data-reveal="group"
-      onPointerMove={updateCursorGlow}
       className="final-cta relative mt-14 overflow-hidden border-y border-white/10 py-12 sm:mt-20 sm:py-16 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-16 lg:py-20"
     >
-      <div aria-hidden="true" className="final-cta-cursor-glow absolute inset-0" />
-
       <div className="relative z-[1] max-w-3xl">
-        <h2 data-reveal="title" className="text-[clamp(4rem,9vw,8rem)] font-semibold leading-[.82] tracking-[-.065em] text-white">
+        <h2 data-reveal="title" className="text-[clamp(3.1rem,6.4vw,6rem)] font-semibold leading-[.86] tracking-[-.06em] text-white">
           <span className="block">Tem uma</span>
           <span className="block">ideia em</span>
           <span className="services-title-accent block font-serif font-normal italic">mente?</span>
@@ -170,9 +155,9 @@ function FinalCallToAction() {
           Conte para a gente. O orçamento é rápido e sem compromisso.
         </p>
 
-        <div data-reveal="control" className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[.035] px-3.5 py-2 text-xs font-medium tracking-[.02em] text-white/62 backdrop-blur-sm sm:text-sm">
+        <div data-reveal="control" className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-xs font-medium tracking-[.02em] text-white/62 backdrop-blur-sm sm:text-sm">
           <span aria-hidden="true" className="final-cta-online-dot relative size-2 rounded-full bg-[#25d366]" />
-          Resposta em até 1 hora
+          Online agora
         </div>
       </div>
 
