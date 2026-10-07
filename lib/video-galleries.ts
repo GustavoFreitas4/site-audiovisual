@@ -3,6 +3,7 @@ export type GalleryVideo = {
   src?: string;
   thumbnail?: string;
   label: string;
+  loopEndSeconds?: number;
 };
 
 // Adicione ou substitua os MP4 em public/videos/eventos/ mantendo estes nomes.
@@ -32,7 +33,7 @@ export const MARCAS_VIDEOS = [
 export const IMOVEIS_VIDEOS = [
   { id: "imovel-01", src: "/videos/imoveis/video-01.mp4", label: "Imóvel 01" },
   { id: "imovel-02", src: "/videos/imoveis/video-02.mp4", label: "Imóvel 02" },
-  { id: "imovel-03", src: "/videos/imoveis/video-03.mp4", label: "Imóvel 03" },
+  { id: "imovel-03", src: "/videos/imoveis/video-03.mp4", label: "Imóvel 03", loopEndSeconds: 60 },
   { id: "imovel-04", src: "/videos/imoveis/video-04.mp4", label: "Imóvel 04" },
   { id: "imovel-05", src: "/videos/imoveis/video-05.mp4", label: "Imóvel 05" },
   { id: "imovel-06", src: "/videos/imoveis/video-06.mp4", label: "Imóvel 06" },

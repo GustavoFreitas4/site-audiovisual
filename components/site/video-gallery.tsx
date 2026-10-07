@@ -60,6 +60,16 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
   const [spotlightBox, setSpotlightBox] = useState<SpotlightBox | null>(null);
   const [loadAttempt, setLoadAttempt] = useState(0);
   const hasSource = Boolean(video.src?.trim());
+  const loopEndSeconds =
+    typeof video.loopEndSeconds === "number" && video.loopEndSeconds > 0
+      ? video.loopEndSeconds
+      : null;
+  const playbackDuration =
+    loopEndSeconds === null
+      ? duration
+      : duration > 0
+        ? Math.min(duration, loopEndSeconds)
+        : loopEndSeconds;
   const resolvedVideoSource = (() => {
     if (!shouldLoad || !video.src) return undefined;
     if (loadAttempt === 0) return video.src;
@@ -293,8 +303,25 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     else activateAudio();
   };
 
+  const handleTimeUpdate = (media: HTMLVideoElement) => {
+    if (loopEndSeconds !== null && media.currentTime >= loopEndSeconds) {
+      const wasPlaying = !media.paused;
+      media.currentTime = 0;
+      setCurrentTime(0);
+
+      if (wasPlaying) {
+        media.play().catch(() => {
+          // Mantém o estado atual caso o navegador interrompa a retomada automática.
+        });
+      }
+      return;
+    }
+
+    setCurrentTime(media.currentTime);
+  };
+
   const showSoundLabel = !isAudioActive;
-  const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
+  const progress = playbackDuration > 0 ? Math.min((currentTime / playbackDuration) * 100, 100) : 0;
 
   const togglePlayback = () => {
     const media = videoRef.current;
@@ -321,8 +348,10 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
     const media = videoRef.current;
     if (!media || hasError) return;
 
-    const mediaDuration = Number.isFinite(media.duration) && media.duration > 0 ? media.duration : duration;
-    const upperLimit = mediaDuration > 0 ? mediaDuration : Number.POSITIVE_INFINITY;
+    const mediaDuration = Number.isFinite(media.duration) && media.duration > 0 ? media.duration : playbackDuration;
+    const upperLimit = loopEndSeconds === null
+      ? mediaDuration > 0 ? mediaDuration : Number.POSITIVE_INFINITY
+      : Math.min(mediaDuration > 0 ? mediaDuration : loopEndSeconds, loopEndSeconds);
     const nextTime = Math.min(Math.max(media.currentTime + seconds, 0), upperLimit);
     media.currentTime = nextTime;
     setCurrentTime(nextTime);
@@ -375,7 +404,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
             preload="metadata"
             autoPlay
             muted={!isAudioActive}
-            loop
+            loop={loopEndSeconds === null}
             playsInline
             aria-hidden="true"
             tabIndex={-1}
@@ -393,7 +422,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               }
             }}
             onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
-            onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+            onTimeUpdate={(event) => handleTimeUpdate(event.currentTarget)}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onError={(event) => handleVideoError(event.currentTarget)}
@@ -524,11 +553,11 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
             <input
               type="range"
               min="0"
-              max={duration || 0}
+              max={playbackDuration || 0}
               step="0.01"
-              value={duration > 0 ? Math.min(currentTime, duration) : 0}
+              value={playbackDuration > 0 ? Math.min(currentTime, playbackDuration) : 0}
               aria-label={`Progresso de ${video.label}`}
-              aria-valuetext={`${formatVideoTime(currentTime)} de ${formatVideoTime(duration)}`}
+              aria-valuetext={`${formatVideoTime(currentTime)} de ${formatVideoTime(playbackDuration)}`}
               onClick={(event) => event.stopPropagation()}
               onPointerDown={holdControlsVisible}
               onPointerUp={scheduleControlsHide}
@@ -540,7 +569,7 @@ function GalleryVideoTile({ video, index, isFocused, isDimmed, onFocus, onBlur }
               style={{ background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${progress}%, rgba(255,255,255,.2) ${progress}%, rgba(255,255,255,.2) 100%)` }}
             />
             <div className="mt-2 text-right text-[.68rem] font-medium tabular-nums text-white/75 sm:text-xs">
-              {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
+              {formatVideoTime(currentTime)} / {formatVideoTime(playbackDuration)}
             </div>
           </div>
         ) : null}
