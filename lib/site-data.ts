@@ -9,7 +9,6 @@ export const SERVICES = [
     description:
       "Registros aéreos e terrestres que transformam celebrações em filmes cheios de emoção, movimento e memória.",
     tags: ["Casamentos", "Pré-wedding", "Chá revelação", "Aniversários"],
-    video: "/videos/eventos/video-01.mp4?v=2",
     icon: PartyPopper,
   },
   {
@@ -17,7 +16,6 @@ export const SERVICES = [
     description:
       "Produção audiovisual para empresas que querem transformar espaços e produtos em conteúdo que converte.",
     tags: ["Espaços comerciais", "Marcas", "Redes sociais", "Institucional"],
-    video: "/videos/marcas/video-01.mp4",
     icon: Megaphone,
   },
   {
@@ -25,7 +23,6 @@ export const SERVICES = [
     description:
       "Do alto ao detalhe: imagens que dão vida a cada cômodo e aceleram a decisão de compra.",
     tags: ["Apartamentos", "Casas de alto padrão", "Condomínios", "Lançamentos"],
-    video: "/videos/imoveis/video-01.mp4",
     icon: Building2,
   },
 ] as const;

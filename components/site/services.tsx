@@ -19,10 +19,6 @@ const SERVICE_GALLERY_LINKS = [
   { id: "imoveis", href: "/servicos/imoveis" },
 ] as const;
 
-function hasFinePointer() {
-  return typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === true;
-}
-
 function ServiceCard({
   service,
   index,
@@ -35,105 +31,16 @@ function ServiceCard({
   galleryId?: string;
 }) {
   const Icon = service.icon;
-  const cardRef = useRef<HTMLAnchorElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const isHoveredRef = useRef(false);
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-  const [videoState, setVideoState] = useState<"idle" | "ready" | "error">("idle");
-
-  const handleMouseEnter = () => {
-    if (videoState === "error" || !hasFinePointer()) return;
-
-    isHoveredRef.current = true;
-    setShouldLoadVideo(true);
-
-    const video = videoRef.current;
-    if (!video || !video.currentSrc) return;
-
-    video.currentTime = 0;
-    const playPromise = video.play();
-    playPromise?.catch(() => {
-      // Browsers can reject playback until the source is available; the card hover still works.
-    });
-  };
-
-  const handleMouseLeave = () => {
-    isHoveredRef.current = false;
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.pause();
-    video.currentTime = 0;
-  };
-
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    if (!("IntersectionObserver" in window)) {
-      setShouldLoadVideo(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        setShouldLoadVideo(true);
-        observer.disconnect();
-      },
-      { rootMargin: "280px 0px", threshold: 0.01 },
-    );
-
-    observer.observe(card);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(
-    () => () => {
-      const video = videoRef.current;
-      if (!video) return;
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-    },
-    [],
-  );
 
   return (
     <a
-      ref={cardRef}
       href={href}
       data-reveal="card"
-      data-video={service.video}
       data-service-gallery={galleryId}
       aria-label={href ? `Abrir galeria de vídeos de ${service.title}` : undefined}
-      className={`service-row group relative grid gap-5 overflow-hidden py-8 text-inherit no-underline sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${videoState === "ready" ? "service-row--video-ready" : ""} ${href ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : "pointer-events-none"}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      className={`service-row group relative grid gap-5 overflow-hidden py-8 text-inherit no-underline sm:grid-cols-[4rem_1fr_auto] sm:items-start sm:gap-7 sm:py-10 ${href ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" : "pointer-events-none"}`}
       style={{ "--reveal-delay": `${index * 75}ms` } as CSSProperties}
     >
-      <video
-        ref={videoRef}
-        className="service-video pointer-events-none absolute inset-0 h-full w-full object-cover"
-        src={shouldLoadVideo ? service.video : undefined}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-        tabIndex={-1}
-        onLoadedData={(event) => {
-          setVideoState("ready");
-          if (isHoveredRef.current) {
-            event.currentTarget.play().catch(() => {
-              // O hover visual continua funcional se a reprodução for bloqueada.
-            });
-          }
-        }}
-        onError={() => setVideoState("error")}
-      />
-      <div aria-hidden="true" className="service-video-overlay pointer-events-none absolute inset-0" />
-
       <span className="relative z-[2] origin-left text-sm font-semibold tracking-[.16em] text-primary-readable/70 transition duration-300 group-hover:scale-105 group-hover:text-primary-readable group-hover:opacity-100">
         0{index + 1}
       </span>

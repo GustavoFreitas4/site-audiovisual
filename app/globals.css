@@ -391,7 +391,7 @@ body {
   position: absolute;
   inset: 0 -1.25rem;
   z-index: 0;
-  background: linear-gradient(90deg, rgba(13,92,99,.1), transparent 70%);
+  background: radial-gradient(circle at right center, rgba(13, 92, 99, .1), transparent 60%);
   opacity: 0;
   transition: opacity .3s ease;
   pointer-events: none;
@@ -421,22 +421,9 @@ body {
   transform: scaleX(1);
 }
 
-.service-row > :not(.service-video):not(.service-video-overlay) {
+.service-row > * {
   position: relative;
   z-index: 2;
-}
-
-.service-video {
-  z-index: 0;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-
-.service-video-overlay {
-  z-index: 1;
-  background: linear-gradient(90deg, rgba(3, 3, 4, .9) 0%, rgba(3, 3, 4, .64) 54%, rgba(3, 3, 4, .48) 100%);
-  opacity: 0;
-  transition: opacity .3s ease;
 }
 
 .video-seek-bar {
@@ -493,17 +480,6 @@ body {
   animation: service-area-pin-pulse 2.8s ease-out infinite;
   transform-box: fill-box;
   transform-origin: center;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .service-row--video-ready .service-video {
-    opacity: .35;
-  }
-
-  .service-row--video-ready .service-video-overlay {
-    opacity: 1;
-  }
-
 }
 
 .whatsapp-float::before {
@@ -614,9 +590,7 @@ body {
     transform: none;
   }
 
-  .service-row::after,
-  .service-video,
-  .service-video-overlay {
+  .service-row::after {
     transition: none;
   }
 
