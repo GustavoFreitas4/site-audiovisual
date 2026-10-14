@@ -47,3 +47,4 @@ next-env.d.ts
 
 # Originais locais dos vídeos; as cópias otimizadas ficam em public/videos/.
 /public/videoos/
+/site-audiovisual/
